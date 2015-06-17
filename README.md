@@ -65,7 +65,7 @@ python mdb.py
 Run the generated yaml file to start the mongos (switch process)
 
 ```
-docker-compose -f app.yaml up
+docker-compose -f switch.yaml up
 ```
 
 Copy the script that will build the sharded system and insert some data
