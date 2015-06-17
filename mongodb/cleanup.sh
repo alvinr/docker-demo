@@ -2,12 +2,11 @@
 
 eval "$(docker-machine env --swarm mongodb-swarm)"
 
-docker-compose -f mdb.yaml stop
-docker-compose -f switch.yaml stop
-docker-compose -f app.yaml stop
-docker-compose -f mdb.yaml rm -f
-docker-compose -f switch.yaml rm -f
-docker-compose -f app.yaml rm -f
+for YAML in "mdb_dev.yaml" "mdb_dev_cluster.yaml" "mdb_prod_cluster.yaml" ; do
+  docker-compose -f ${YAML} stop
+  docker-compose -f ${YAML} rm -f
+done
+
 docker-machine ssh mongodb-server1 "sudo rm -rf /data/db/*"
 docker-machine ssh mongodb-server2 "sudo rm -rf /data/db/*"
 docker-machine ssh mongodb-server3 "sudo rm -rf /data/db/*"

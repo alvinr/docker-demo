@@ -28,16 +28,15 @@ for c in containers:
 	labels = details['Config']['Labels']
 
 	for k in labels:
-		if ( k  == 'com.docker.examples.mongodb.mongod' ) :
-			node['Priority'] = details['Config']['Labels']['com.docker.examples.mongodb.mongod.priority']
-			shard_name = labels['com.docker.examples.mongodb.mongod.replset']
-			shards.setdefault(shard_name,[]).append(node)
-		elif ( k == 'com.docker.examples.mongodb.mongoc' ) :
-#			configs.setdefault(name,[]).append(node)
-			configs[name] = node
-#			configs.append({name: node})
-		elif ( k == 'com.docker.examples.mongodb.mongos' ) :
-			switches[name] = node 			
+		if ( k  == 'com.docker.examples.mongodb.role' ) :
+			if ( labels[k] == "mongod" ):
+				node['Priority'] = details['Config']['Labels']['com.docker.examples.mongodb.mongod.priority']
+				shard_name = labels['com.docker.examples.mongodb.mongod.replset']
+				shards.setdefault(shard_name,[]).append(node)
+			elif ( labels[k] == "mongoc" ):
+				configs[name] = node
+			elif ( labels[k] == "mongos" ):
+				switches[name] = node 			
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -72,7 +71,7 @@ for shard in shards:
 	# contact the ReplSet and initiate the set
 	host=""
 	for node in cfg['members']:
-		if ( node['priority'] > 0 ):
+		if ( node['priority'] == 10 ):
 			host = node['host']
 			break
 
@@ -81,6 +80,7 @@ for shard in shards:
 	db = client['admin']
 	rsi = {}
 	rsi['replSetInitiate'] = cfg
+	pp.pprint(cfg)
 	db.command(rsi)
 
 
@@ -103,13 +103,13 @@ mongos_yaml_template = '''
 mongos1:
   image: alvinr/mongos
   ports: 
-    - "32017:27017"
+    - "27017:27017"
   command: --configdb %(config_hosts)s
   labels:
-    - "com.docker.examples.mongodb.mongos=true"
+    - "com.docker.examples.mongodb.role=mongos"
   environment:
-    - "affinity:com.docker.examples.mongodb.mongod!=true"
-    - "affinity:com.docker.examples.mongodb.mongoc!=true"
+    - "affinity:com.docker.examples.mongodb.role!=mongod"
+    - "affinity:com.docker.examples.mongodb.role!=mongoc"
 ''' % {'config_hosts' : ("".join(["," + node for node in config_hosts])).lstrip(",")}	
 switch_yaml_file = open("switch.yaml", 'w')
 switch_yaml_file.write(mongos_yaml_template)
@@ -120,14 +120,14 @@ app_yaml_template = '''
 app:
   image: alvinr/mongo
   ports: 
-    - "31017:27017"
+    - "27017:27017"
   volumes: 
     - /data/docker:/data/scripts
   command: -i -t %(switch_host)s
   labels:
     - "com.docker.examples.mongodb.app=true"
   environment:
-    - "affinity:com.docker.examples.mongodb.mongos==true"
+    - "affinity:com.docker.examples.mongodb.role==mongos"
 ''' % {'switch_host' : ("".join(["," + node for node in config_hosts])).lstrip(",")}	
 app_yaml_file = open("app.yaml", 'w')
 app_yaml_file.write(app_yaml_template)
