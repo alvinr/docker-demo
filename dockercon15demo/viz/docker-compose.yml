@@ -1,0 +1,11 @@
+viz:
+  build: .
+  ports:
+   - 3000:3000
+  environment:
+   - SWARM_HOST
+   - SWARM_CA
+   - SWARM_KEY
+   - SWARM_CERT
+   - "constraint:node==swarm-0"
+  restart: always

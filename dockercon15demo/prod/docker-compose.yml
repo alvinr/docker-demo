@@ -1,0 +1,18 @@
+haproxy:
+  extends:
+    file: haproxy.yml
+    service: server
+  environment:
+    - "constraint:node==swarm-0"
+web:
+  image: alvinr/demo-webapp
+  extends:
+    file: haproxy.yml
+    service: backend
+  environment:
+    - MONGO_HOST=prod_mongo_1
+mongodb:
+  image: mongo
+  environment:
+    - "constraint:node==swarm-0"
+  command: --smallfiles --noprealloc

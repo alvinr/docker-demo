@@ -1,0 +1,14 @@
+{
+  "name": "viz",
+  "version": "0.0.1",
+  "description": "visualize docker containers on a swarm master",
+  "scripts": {
+    "start": "node viz"
+  },
+  "dependencies": {
+    "async": "^1.2.1",
+    "dockerode": "latest",
+    "express": "latest",
+    "socket.io": "^1.3.5"
+  }
+}

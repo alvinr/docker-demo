@@ -1,0 +1,3 @@
+#!/bin/bash
+eval "$(docker-machine env --swarm swarm-0)"
+export PS1="\h:~/prod-app$ "
