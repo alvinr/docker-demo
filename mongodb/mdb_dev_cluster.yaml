@@ -8,12 +8,10 @@ rs1a:
     - /data/db/s1rs1a:/data/db
   command: --smallfiles --noprealloc --replSet rs1
   labels:
-    - "com.docker.examples.mongodb.role=mongod"
     - "com.docker.examples.mongodb.mongod.replset=rs1"
-    - "com.docker.examples.mongodb.mongod.priority=10"
-  environment:
-    - "affinity:com.docker.examples.mongodb.mongod.replset!=rs1"
-    - "constraint:node!=mongodb-swarm"
+  # environment:
+  #   - "affinity:com.docker.examples.mongodb.mongod.replset!=rs1"
+  #   - "constraint:node!=mongodb-swarm"
 
 rs1b:
   extends:
@@ -25,12 +23,10 @@ rs1b:
     - /data/db/s1rs1b:/data/db
   command: --smallfiles --noprealloc --replSet rs1
   labels:
-    - "com.docker.examples.mongodb.role=mongod"
     - "com.docker.examples.mongodb.mongod.replset=rs1"
-    - "com.docker.examples.mongodb.mongod.priority=1"
-  environment:
-    - "affinity:com.docker.examples.mongodb.mongod.replset!=rs1"
-    - "constraint:node!=mongodb-swarm"
+  # environment:
+  #   - "affinity:com.docker.examples.mongodb.mongod.replset!=rs1"
+  #   - "constraint:node!=mongodb-swarm"
 
 rs1c:
   extends:
@@ -42,14 +38,11 @@ rs1c:
     - /data/db/s1rs1c:/data/db
   command: --smallfiles --noprealloc --replSet rs1
   labels:
-    - "com.docker.examples.mongodb.role=mongod"
     - "com.docker.examples.mongodb.mongod.replset=rs1"
-    - "com.docker.examples.mongodb.mongod.priority=0"
-
-  environment:
-    - "affinity:com.docker.examples.mongodb.mongod.priority!=10"
-    - "affinity:com.docker.examples.mongodb.mongod.replset!=rs1"
-    - "constraint:node!=mongodb-swarm"
+  # environment:
+  #   - "affinity:com.docker.examples.mongodb.mongod.priority!=10"
+  #   - "affinity:com.docker.examples.mongodb.mongod.replset!=rs1"
+  #   - "constraint:node!=mongodb-swarm"
 
 rs2a:
   extends:
@@ -61,12 +54,10 @@ rs2a:
     - /data/db/s2rs2a:/data/db
   command: --smallfiles --noprealloc --replSet rs2
   labels:
-    - "com.docker.examples.mongodb.role=mongod"
     - "com.docker.examples.mongodb.mongod.replset=rs2"
-    - "com.docker.examples.mongodb.mongod.priority=10"
-  environment:
-    - "affinity:com.docker.examples.mongodb.mongod.replset!=rs2"
-    - "constraint:node!=mongodb-swarm"
+  # environment:
+  #   - "affinity:com.docker.examples.mongodb.mongod.replset!=rs2"
+  #   - "constraint:node!=mongodb-swarm"
 
 rs2b:
   extends:
@@ -78,12 +69,10 @@ rs2b:
     - /data/db/s2rs2b:/data/db
   command: --smallfiles --noprealloc --replSet rs2
   labels:
-    - "com.docker.examples.mongodb.role=mongod"
     - "com.docker.examples.mongodb.mongod.replset=rs2"
-    - "com.docker.examples.mongodb.mongod.priority=1"
-  environment:
-    - "affinity:com.docker.examples.mongodb.mongod.replset!=rs2"
-    - "constraint:node!=mongodb-swarm"
+  # environment:
+  #   - "affinity:com.docker.examples.mongodb.mongod.replset!=rs2"
+  #   - "constraint:node!=mongodb-swarm"
 
 rs2c:
   extends:
@@ -97,11 +86,10 @@ rs2c:
   labels:
     - "com.docker.examples.mongodb.role=mongod"
     - "com.docker.examples.mongodb.mongod.replset=rs2"
-    - "com.docker.examples.mongodb.mongod.priority=0"
-  environment:
-    - "affinity:com.docker.examples.mongodb.mongod.priority!=10"
-    - "affinity:com.docker.examples.mongodb.mongod.replset!=rs2"
-    - "constraint:node!=mongodb-swarm"
+  # environment:
+  #   - "affinity:com.docker.examples.mongodb.mongod.priority!=10"
+  #   - "affinity:com.docker.examples.mongodb.mongod.replset!=rs2"
+  #   - "constraint:node!=mongodb-swarm"
 
 config1:
   image: alvinr/configsvr
@@ -112,9 +100,9 @@ config1:
   command: --smallfiles --noprealloc --configsvr --dbpath /data/db
   labels:
     - "com.docker.examples.mongodb.role=mongoc"
-  environment:
-    - "affinity:com.docker.examples.mongodb.role!=mongoc"
-    - "constraint:node!=mongodb-swarm"
+  # environment:
+  #   - "affinity:com.docker.examples.mongodb.role!=mongoc"
+  #   - "constraint:node!=mongodb-swarm"
 
 config2:
   image: alvinr/configsvr
@@ -125,9 +113,9 @@ config2:
   command: --smallfiles --noprealloc --configsvr --dbpath /data/db
   labels:
     - "com.docker.examples.mongodb.role=mongoc"
-  environment:
-    - "affinity:com.docker.examples.mongodb.role!=mongoc"
-    - "constraint:node!=mongodb-swarm"
+  # environment:
+  #   - "affinity:com.docker.examples.mongodb.role!=mongoc"
+  #   - "constraint:node!=mongodb-swarm"
 
 config3:
   image: alvinr/configsvr
@@ -138,8 +126,8 @@ config3:
   command: --smallfiles --noprealloc --configsvr --dbpath /data/db
   labels:
     - "com.docker.examples.mongodb.role=mongoc"
-  environment:
-    - "affinity:com.docker.examples.mongodb.role!=mongoc"
-    - "constraint:node!=mongodb-swarm"
+  # environment:
+  #   - "affinity:com.docker.examples.mongodb.role!=mongoc"
+  #   - "constraint:node!=mongodb-swarm"
 
 

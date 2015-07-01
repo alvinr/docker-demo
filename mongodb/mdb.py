@@ -30,7 +30,12 @@ for c in containers:
 	for k in labels:
 		if ( k  == 'com.docker.examples.mongodb.role' ) :
 			if ( labels[k] == "mongod" ):
-				node['Priority'] = details['Config']['Labels']['com.docker.examples.mongodb.mongod.priority']
+				priority=1
+				for j in labels:
+					if ( j == "com.docker.examples.mongodb.mongod.priority"):
+						priority = details['Config']['Labels']['com.docker.examples.mongodb.mongod.priority']
+						break
+				node['Priority'] = priority
 				shard_name = labels['com.docker.examples.mongodb.mongod.replset']
 				shards.setdefault(shard_name,[]).append(node)
 			elif ( labels[k] == "mongoc" ):
@@ -71,16 +76,14 @@ for shard in shards:
 	# contact the ReplSet and initiate the set
 	host=""
 	for node in cfg['members']:
-		if ( node['priority'] == 10 ):
+		if ( node['priority'] > 0 ):
 			host = node['host']
 			break
-
 	client = MongoClient(host)
 
 	db = client['admin']
 	rsi = {}
 	rsi['replSetInitiate'] = cfg
-	pp.pprint(cfg)
 	db.command(rsi)
 
 
@@ -102,6 +105,7 @@ for config in configs:
 mongos_yaml_template = '''
 mongos1:
   image: alvinr/mongos
+  hostname: mongodb-host.local
   ports: 
     - "27017:27017"
   command: --configdb %(config_hosts)s

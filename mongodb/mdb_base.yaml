@@ -1,2 +1,5 @@
 mongodb_service:
   image: mongo:latest
+  labels:
+    - "com.docker.examples.mongodb.role=mongod"
+  command: --smallfiles --noprealloc    

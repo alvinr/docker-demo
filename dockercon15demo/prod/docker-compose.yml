@@ -10,7 +10,7 @@ web:
     file: haproxy.yml
     service: backend
   environment:
-    - MONGO_HOST=prod_mongo_1
+    - MONGO_HOST=prod_mongodb_1
 mongodb:
   image: mongo
   environment:

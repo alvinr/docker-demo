@@ -4,6 +4,3 @@ mongodb:
     service: mongodb_service
   ports: 
     - "27017:27017"
-  volumes: 
-    - /data/db/mongodb:/data/db
-  command: --smallfiles --noprealloc

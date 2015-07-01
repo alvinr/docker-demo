@@ -1,2 +1,2 @@
 #!/bin/bash
-docker-machine rm $(docker-machine ls -q | grep swarm)
+docker-machine rm -f $(docker-machine ls -q | grep swarm)
