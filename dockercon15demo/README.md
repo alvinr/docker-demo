@@ -51,7 +51,7 @@ Start the MongoDB Cluster
     $ cd mongodb
     $ source scripts/setup.sh
     $ docker-compose up -d
-    $ docker run alvinr/init-mongo mongodb_mongodb_1:27017
+    $ docker run alvinr/init-mongodb mongodb_mongodb_1:27017
     $ docker-machine ssh swarm-0
         $ docker service detach prod_mongodb_1 prod_mongodb_1.multihost
         $ docker service attach mongodb_mongodb_1 prod_mongodb_1.multihost
