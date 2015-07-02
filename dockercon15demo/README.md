@@ -1,7 +1,7 @@
 # Orchestration & Networking demo
 
 ## Cavets
-* has been etsted on os-x 10.10 only
+* has been tested on os-x 10.10 only
 * scripts will create machines based on the vmwarefusion driver. If you don't have that, then you will need to make some changes
 * because boot2docker.iso is used, the locations of files will change if you use Ubuntu or something else. 
 * you will need an "experimental" version of "docker" client executable for Darwin
@@ -16,6 +16,7 @@ Create dev environment:
 
 Create a Swarm:
 
+    $ eval $(docker-machine env dev)
     $ scripts/create-swarm.sh
     $ echo "$(docker-machine ip swarm-0) demo.dockercon.com" | sudo tee -a /etc/hosts
 
@@ -26,6 +27,8 @@ Start the Viz:
      $ scripts/up.sh swarm-0
      $ echo "$(docker-machine ip dev) viz.dockercon.com" | sudo tee -a /etc/hosts
 
+The app will be available at http://viz.dockercon.com:3000    
+
 ## Running demo - Part One: Scale the app
 
 To start app in development:
@@ -34,7 +37,7 @@ To start app in development:
     $ source scripts/setup.sh
     $ docker-compose up
 
-Run `docker-machine ip dev` and open this in a web browser on port 5000 to view dev environment.
+The app will be available at http://dev.dockercon.com:5000
 
 To start app in production:
 
