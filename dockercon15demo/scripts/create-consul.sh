@@ -11,7 +11,8 @@ if docker-machine ls | grep -q "$ENGINE"
 then
   echo "consul engine already created"
  else
-   docker-machine create -d vmwarefusion --vmwarefusion-boot2docker-url https://github.com/tianon/boot2docker/releases/download/v1.7.0-rc5/boot2docker.iso $ENGINE
+#   docker-machine create -d vmwarefusion --vmwarefusion-boot2docker-url https://github.com/tianon/boot2docker/releases/download/v1.7.0-rc5/boot2docker.iso $ENGINE
+   docker-machine create -d vmwarefusion $ENGINE
    scripts/install-docker.sh $ENGINE
 fi
 

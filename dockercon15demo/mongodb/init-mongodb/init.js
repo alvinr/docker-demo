@@ -1,4 +1,11 @@
-db = connect("mongodb_rs1a_1:27017/admin")
+function initReplSet(cfg) {
+
+   db = connect(cfg["members"][0]["host"]+"/admin");
+   rs.initiate(cfg);
+
+   while (rs.status().startupStatus || (rs.status().hasOwnProperty("myState") && rs.status().myState != 1)) { sleep(1000); }
+
+}
 
 cfg_rs1 = {
 	_id: "rs1",
@@ -18,12 +25,6 @@ cfg_rs1 = {
 	]
 }
 
-rs.initiate(cfg_rs1)
-
-while (rs.status().startupStatus || (rs.status().hasOwnProperty("myState") && rs.status().myState != 1)) { sleep(1000); }
-
-db = connect("mongodb_rs2a_1:27017/admin")
-
 cfg_rs2 = {
 	_id: "rs2",
 	members: [
@@ -42,14 +43,15 @@ cfg_rs2 = {
 	]
 }
 
-rs.initiate(cfg_rs2)
+initReplSet(cfg_rs1);
+initReplSet(cfg_rs2);
 
-while (rs.status().startupStatus || (rs.status().hasOwnProperty("myState") && rs.status().myState != 1)) { sleep(1000); }
+sleep(5000);
 
-db = connect("mongodb_mongodb_1:27017/admin")
+db = connect("mongodb_mongodb_1:27017/admin");
 
-sh.addShard("rs1/mongodb_rs1a_1:27017,mongodb_rs1b_1:27017")
-sh.addShard("rs2/mongodb_rs2a_1:27017,mongodb_rs2b_1:27017")
+sh.addShard("rs1/mongodb_rs1a_1:27017,mongodb_rs1b_1:27017");
+sh.addShard("rs2/mongodb_rs2a_1:27017,mongodb_rs2b_1:27017");
 
-sh.enableSharding("test")
-sh.shardCollection("test.hits", { _id : "hashed" })
+sh.enableSharding("test");
+sh.shardCollection("test.hits", { _id : "hashed" });

@@ -9,5 +9,5 @@ done
 
 for NODE in $(docker-machine ls -q | grep swarm)
 do
-  docker-machine ssh $NODE "sudo rm -r /data/db/*"
+  docker-machine ssh $NODE "sudo rm -r /data/db/*" 
 done

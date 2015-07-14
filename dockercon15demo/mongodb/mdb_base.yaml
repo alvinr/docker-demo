@@ -9,14 +9,14 @@ mongodb_service_replset_1:
   labels:
     - "com.docker.examples.mongodb.role=mongod"
     - "com.docker.examples.mongodb.mongod.replset=rs1"
-  command: --smallfiles --noprealloc --replSet rs1
+  command: --smallfiles --noprealloc --replSet rs1  --oplogSize 10
 
 mongodb_service_replset_2:
   image: mongo:latest
   labels:
     - "com.docker.examples.mongodb.role=mongod"
     - "com.docker.examples.mongodb.mongod.replset=rs2"
-  command: --smallfiles --noprealloc --replSet rs2
+  command: --smallfiles --noprealloc --replSet rs2 --oplogSize 10
 
 mongodb_config_service:
   image: mongo:latest

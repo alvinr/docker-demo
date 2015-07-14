@@ -44,7 +44,7 @@ To start app in production:
     $ cd prod/
     $ source scripts/setup.sh
     $ docker-compose up -d
-    $ docker-compose scale web=10
+    $ docker-compose scale web=5
 
 The app will be available at http://demo.dockercon.com
 
@@ -54,10 +54,12 @@ Start the MongoDB Cluster
     $ cd mongodb
     $ source scripts/setup.sh
     $ docker-compose up -d
-    $ docker run alvinr/init-mongodb mongodb_mongodb_1:27017
-    $ docker-machine ssh swarm-0
-        $ docker service detach prod_mongodb_1 prod_mongodb_1.multihost
-        $ docker service attach mongodb_mongodb_1 prod_mongodb_1.multihost
+    $ docker run alvinr/init-mongodb --nodb
+    $ docker-machine ssh swarm-0 "docker service detach prod_mongodb_1 prod_mongodb_1.multihost"
+    $ docker-machine ssh swarm-0 "docker service attach mongodb_mongodb_1 prod_mongodb_1.multihost"
+
+ You can log onto the MongoDb using by
+    $ docker run -it --rm alvinr/mongo mongodb_mongodb_1:27017   
 
 ## Running demo - Part Three: Move the DB
 <TBD> need to look at runc checkpoint & restore, examples here https://github.com/crosbymichael/uhaul/blob/master/node.go

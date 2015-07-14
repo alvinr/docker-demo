@@ -7,5 +7,6 @@ DAEMON_OPTIONS=$5
 
 echo "creating $NAME"
 
-docker-machine create -d vmwarefusion --vmwarefusion-boot2docker-url https://github.com/tianon/boot2docker/releases/download/v1.7.0-rc5/boot2docker.iso --swarm --swarm-discovery=token://$TOKEN --swarm-image=$IMAGE $CREATE_OPTIONS $NAME || :
+#docker-machine create -d vmwarefusion --vmwarefusion-boot2docker-url https://github.com/tianon/boot2docker/releases/download/v1.7.0-rc5/boot2docker.iso --swarm --swarm-discovery=token://$TOKEN --swarm-image=$IMAGE $CREATE_OPTIONS $NAME || :
+docker-machine create -d vmwarefusion --swarm --swarm-discovery=token://$TOKEN --swarm-image=$IMAGE $CREATE_OPTIONS $NAME || true
 scripts/install-docker.sh $NAME "$DAEMON_OPTIONS --default-network=overlay:multihost --label=com.docker.network.driver.overlay.bind_interface=eth0"
