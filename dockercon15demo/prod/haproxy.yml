@@ -1,16 +1,17 @@
 server:
-#  image: ehazlett/interlock
-#  image: bfirsh/interlock-haproxy-swarm:multihost
   image: alvinr/interlock-haproxy
   environment:
    - "DOCKER_HOST"
   volumes:
-   - "/mnt/sda1/var/lib/boot2docker:/etc/docker"
+  # boot2docker images use the following
+  # "/mnt/sda1/var/lib/boot2docker:/etc/docker"
+  # ubuntu images use
+  - "/etc/docker:/etc/docker"
   ports:
    - "80:8080"
 backend:
   labels:
    - "com.interlock.networkmode=internal"
    - "com.interlock.port=5000"
-  hostname: demo.dockercon.com
+  hostname: prod.dockercon.com
 

@@ -67,6 +67,7 @@ config1:
   image: mongo:3.0.3
   environment:
     - "affinity:com.docker.examples.mongodb.role!=mongoc"
+    - "constraint:node!=swarm-0"
 
 config2:
   extends:
@@ -75,6 +76,7 @@ config2:
   image: mongo:3.0.3
   environment:
     - "affinity:com.docker.examples.mongodb.role!=mongoc"
+    - "constraint:node!=swarm-0"
 
 config3:
   extends:
@@ -83,3 +85,4 @@ config3:
   image: mongo:3.0.3
   environment:
     - "affinity:com.docker.examples.mongodb.role!=mongoc"
+    - "constraint:node!=swarm-0"

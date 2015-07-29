@@ -46,7 +46,7 @@ cfg_rs2 = {
 initReplSet(cfg_rs1);
 initReplSet(cfg_rs2);
 
-sleep(5000);
+#sleep(5000);
 
 db = connect("mongodb_mongodb_1:27017/admin");
 

@@ -1,2 +1,23 @@
 #!/bin/bash
-docker-machine ls -q | grep -E 'swarm-[0-9]+' | parallel docker-machine ssh {} "sudo /ect/init.d/docker restart"
+MODE=$1
+
+if [ "$MODE" == "" ]
+then
+  MODE="restart"
+fi
+
+for NODE in `docker-machine ls -q | grep -E 'swarm-[0-9]+'`
+do
+    lsb_dist=""
+    if [ ! -x $(docker-machine ssh $NODE "which lsb_release") ]
+    then
+      lsb_dist=$(docker-machine ssh $NODE "lsb_release -si" | cut -d" " -f 1)
+    fi
+
+    if [ "$lsb_dist" == "Ubuntu" ]
+    then
+      docker-machine ssh $NODE "sudo service docker $MODE"
+    else
+      docker-machine ssh $NODE "sudo /etc/init.d/docker $MODE"
+    fi 
+done

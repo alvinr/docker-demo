@@ -18,7 +18,7 @@ Create a Swarm:
 
     $ eval $(docker-machine env dev)
     $ scripts/create-swarm.sh
-    $ echo "$(docker-machine ip swarm-0) demo.dockercon.com" | sudo tee -a /etc/hosts
+    $ echo "$(docker-machine ip swarm-0) prod.dockercon.com" | sudo tee -a /etc/hosts
 
 Start the Viz:
 
@@ -46,7 +46,7 @@ To start app in production:
     $ docker-compose up -d
     $ docker-compose scale web=5
 
-The app will be available at http://demo.dockercon.com
+The app will be available at http://prod.dockercon.com
 
 ## Running demo - Part Two: Scale the DB
 
@@ -55,6 +55,7 @@ Start the MongoDB Cluster
     $ source scripts/setup.sh
     $ docker-compose up -d
     $ docker run alvinr/init-mongodb --nodb
+    $ docker-machine ssh swarm-0 "docker service detach mongodb_mongodb_1 mongodb_mongodb_1.multihost"
     $ docker-machine ssh swarm-0 "docker service detach prod_mongodb_1 prod_mongodb_1.multihost"
     $ docker-machine ssh swarm-0 "docker service attach mongodb_mongodb_1 prod_mongodb_1.multihost"
 
@@ -79,17 +80,19 @@ If you want to rebuild the images for any reason, you will need to build, push a
 
 ## Build the mongo images
 
+    $ HUB_USER="my hub user"
+
     $ cd mongodb/mongo
     $ eval "$(docker-machine env dev)"
-    $ docker build -t myuser/mongo build .
-    $ docker push myuser/mongo
+    $ docker build -t $HUB_USER/mongo .
+    $ docker push $HUB_USER/mongo
 
     $ cd mongodb/mongos
     $ eval "$(docker-machine env dev)"
-    $ docker build -t myuser/mongos build .
-    $ docker push myuser/mongos
+    $ docker build -t $HUB_USER/mongos .
+    $ docker push $HUB_USER/mongos
 
     $ cd mongodb/init-mongo
     $ eval "$(docker-machine env dev)"
-    $ docker build -t myuser/init-mongo build .
-    $ docker push myuser/init-mongo
+    $ docker build -t $HUB_USER/init-mongo .
+    $ docker push $HUB_USER/init-mongo

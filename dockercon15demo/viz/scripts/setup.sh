@@ -1,3 +1,3 @@
 #!/bin/bash
 
-eval "$(docker-machine env dev)"
+eval "$(docker-machine env swarm-consul)"
