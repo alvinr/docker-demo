@@ -14,4 +14,3 @@ backend:
    - "com.interlock.networkmode=internal"
    - "com.interlock.port=5000"
   hostname: prod.dockercon.com
-
