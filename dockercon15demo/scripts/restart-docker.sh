@@ -1,12 +1,19 @@
 #!/bin/bash
 MODE=$1
+NAME=$2
 
 if [ "$MODE" == "" ]
 then
   MODE="restart"
 fi
 
-for NODE in `docker-machine ls -q | grep -E 'swarm-[0-9]+'`
+if [ "$NAME" == "" ]
+then
+   NAME="swarm"
+fi
+
+
+for NODE in `docker-machine ls -q | grep -E '$NAME-[0-9]+'`
 do
     lsb_dist=""
     if [ ! -x $(docker-machine ssh $NODE "which lsb_release") ]

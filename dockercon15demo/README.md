@@ -73,10 +73,11 @@ If you want to rebuild the images for any reason, you will need to build, push a
 
 ## Build the web app
 
+    $ HUB_USER="my hub user"
     $ cd dev
     $ eval "$(docker-machine env dev)"
-    $ docker build -t myuser/demo-webapp .
-    $ docker push mysuer/demo-webapp
+    $ docker build -t $HUB_USER/demo-webapp .
+    $ docker push $HUB_USER/demo-webapp
 
 ## Build the mongo images
 
@@ -96,3 +97,36 @@ If you want to rebuild the images for any reason, you will need to build, push a
     $ eval "$(docker-machine env dev)"
     $ docker build -t $HUB_USER/init-mongo .
     $ docker push $HUB_USER/init-mongo
+
+# Amazon EC2
+Some work has been done to make this demo work on EC2. The swarm can be created on EC2 thus
+
+    $ export AWS_ACCESS_KEY_ID=<my key>
+    $ export AWS_SECRET_ACCESS_KEY=<my secret key>
+    $ export AWS_SECURITY_GROUP=<my group name eg. alvin-dockercon>
+    $ export AWS_SUBNET_ID=<my subnet eg. subnet-6c87e947>
+    $ export AWS_VPC_ID=<my VPC name eg. alvin-dockercon>
+
+    $ scripts/create-swarm.sh amazonec2
+
+In order for this to work, you will need to create a VPC via the VPC Wizard (not by just creating the VPC). You will also need to ensure that the secutiry group opens up the following ports
+
+Docker Engine / Swarm
+- TCP / 2376 / 0.0.0.0
+- TCP / 3376 / 0.0.0.0
+
+Consul
+- TCP / 8400 / 0.0.0.0
+- TCP / 8500 / 0.0.0.0
+- UDP / 8600 / 0.0.0.0
+
+Serf
+- TCP / 7946 / 0.0.0.0
+
+Web App
+- TCP / 80 / 0.0.0.0
+
+VxLAN
+- UDP / 46354 / 0.0.0.0
+Once the following is resolved https://github.com/docker/libnetwork/issues/358#issuecomment-128160349 
+- UDP / 4789 / 0.0.0.0

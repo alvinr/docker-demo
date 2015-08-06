@@ -1,5 +1,4 @@
 #!/bin/bash
-
 function do_dir() {
   local __dir=$1
 

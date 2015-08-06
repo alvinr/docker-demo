@@ -1,14 +1,14 @@
 haproxy:
   extends:
     file: haproxy.yml
-    service: server
+    service: haproxy-server
   environment:
     - "constraint:node==swarm-0"
 web:
   image: alvinr/demo-webapp
   extends:
     file: haproxy.yml
-    service: backend
+    service: haproxy-app
   environment:
     - MONGO_HOST=prod_mongodb_1
 mongodb:
