@@ -25,7 +25,7 @@ Start the Viz:
      $ cd viz
      $ source scripts/setup.sh
      $ scripts/up.sh swarm-0
-     $ echo "$(docker-machine ip dev) viz.dockercon.com" | sudo tee -a /etc/hosts
+     $ echo "$(docker-machine ip swarm-consul) viz.dockercon.com" | sudo tee -a /etc/hosts
 
 The app will be available at http://viz.dockercon.com:3000    
 

@@ -21,9 +21,11 @@ if docker-machine ls | grep -q "$NAME"
     docker-machine create -d $DRIVER --swarm --swarm-discovery=token://$TOKEN --swarm-image="$IMAGE" $CREATE_OPTIONS $NAME || true
 fi
 
-rel=$(docker-machine ssh $NAME "uname -r" | cut -d"." -f 2)
+version=$(docker-machine ssh $NAME "uname -r")
+maj=`echo $version | cut -d"." -f 1`
+min=`echo $version | cut -d"." -f 2`
 
-if [ "$rel" -lt "15" ]
+if [ "$maj" == "3" ] && [ "$min" -lt "15" ]
 then
   echo Need to upgrade Linux kernel for $NAME
   docker-machine ssh $NAME 'sudo DEBIAN_FRONTEND=noninteractive apt-get -qq -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install linux-image-extra-3.16.0-43-generic'
