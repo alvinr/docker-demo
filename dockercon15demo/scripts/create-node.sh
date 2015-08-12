@@ -33,3 +33,9 @@ fi
 
 echo "installing Docker..."
 scripts/install-docker.sh $NAME "$DAEMON_OPTIONS --default-network=overlay:multihost --label=com.docker.network.driver.overlay.bind_interface=eth0"
+
+
+if [ "$maj" == "3" ] && [ "$min" -lt "15" ]
+then
+  docker-machine ssh $NAME "sudo reboot"
+fi

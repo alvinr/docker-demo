@@ -23,11 +23,9 @@ if [ "$lsb_dist" == "Ubuntu" ]
 then
     docker-machine ssh $NAME "sudo service docker stop; \
                               sudo usermod -aG docker \$USER; \
-                              curl -s $URL > ~/docker; \
-                              sudo cp ~/docker /usr/bin/docker; \
-                              sudo chmod +x /usr/bin/docker; \
+                              wget -qO- https://experimental.docker.com/ | sudo sh; \
                               echo 'DOCKER_OPTS=\"\$DOCKER_OPTS $DAEMON_ARGS\"' | sudo tee -a /etc/default/docker; \
-                              sudo reboot" || :                          
+                              sudo service docker restart;" || :                          
 elif [ "$lsb_dist" == "Boot2Docker" ]
 then
     docker-machine ssh $NAME "sudo /etc/init.d/docker stop; \

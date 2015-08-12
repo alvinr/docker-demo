@@ -4,9 +4,9 @@ haproxy-server:
    - "DOCKER_HOST"
   volumes:
   # boot2docker images use the following
-  - "/var/lib/boot2docker:/etc/docker"
+  #- "/var/lib/boot2docker:/etc/docker"
   # ubuntu images use
-  # - "/etc/docker:/etc/docker"
+  - "/etc/docker:/etc/docker"
   ports:
    - "80:8080"
 haproxy-app:
