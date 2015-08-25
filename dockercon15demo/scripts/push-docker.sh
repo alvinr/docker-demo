@@ -7,7 +7,7 @@ then
   NAME="swarm"
 fi
 
-for NODE in `docker-machine ls -q | grep -E '$NAME-[0-9]+'`
+for NODE in `docker-machine ls -q | grep -E "$NAME-[0-9]+"`
 do
     echo Pushing to $NODE
     lsb_dist=""
@@ -20,7 +20,7 @@ do
     then
       docker-machine ssh $NODE "sudo service docker stop"
       docker-machine scp $DOCKER_BIN $NODE:/home/ubuntu/docker
-      docker-machine ssh $NODE "sudo cp /home/ubuntu/docker /usr/bin/docker; sudo chmod +x /usr/bin/docker;sudo service docker start"
+      docker-machine ssh $NODE "sudo cp /home/ubuntu/docker /usr/bin/docker; sudo chmod +x /usr/bin/docker;sudo mv /var/log/upstart/docker.log /var/log/upstart/docker.log`date +%Y-%m-%d-%R`; sudo service docker start"
     else
       docker-machine ssh $NODE "sudo /etc/init.d/docker stop"
       docker-machine scp $DOCKER_BIN $NODE:/home/docker/docker

@@ -14,7 +14,7 @@ fi
 
 for NODE in `docker-machine ls -q | grep -E "$NAME-[0-9]+"`
 do
-    echo Restarting Docker on $NODE
+    echo $MODE Docker on $NODE
     lsb_dist=""
     if [ ! -x $(docker-machine ssh $NODE "which lsb_release") ]
     then
