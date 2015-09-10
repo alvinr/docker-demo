@@ -3,7 +3,7 @@ NAME=$1
 ENGINE="$NAME-consul"
 DRIVER=$2
 
-if [ "$ENGINE" == "" ]
+if [ "$NAME" == "" ]
 then
   ENGINE=$NAME-consul
 fi

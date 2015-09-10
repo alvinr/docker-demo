@@ -12,9 +12,9 @@ then
   SWARM_SIZE=4
 fi
 
-SWARM_NAME=swarm
+SWARM_NAME="swarm"
 TOKEN=$(docker run swarm create)
-IMAGE="swarm:0.4.0-rc1"
+IMAGE="swarm:0.4.0"
 
 if docker-machine ls | grep -q "$SWARM_NAME-consul"
   then 
@@ -24,7 +24,7 @@ if docker-machine ls | grep -q "$SWARM_NAME-consul"
 fi
 CONSUL_IP=$(docker-machine ip $SWARM_NAME-consul)
 
-scripts/create-node.sh $SWARM_NAME-0 $TOKEN $IMAGE "--swarm-master" "--kv-store=consul:$CONSUL_IP:8500" $DRIVER
+scripts/create-node.sh $SWARM_NAME-0 $TOKEN $IMAGE "--swarm-master" "--engine-opt=\"kv-store=consul:$CONSUL_IP:8500\"" $DRIVER
 
 MASTER_IP=$(docker-machine ip $SWARM_NAME-0)
 
@@ -32,8 +32,8 @@ if [ ! -x "$(which parallel)" ]
 then
     for i in `seq 1 $SWARM_SIZE`
     do
-      scripts/create-node.sh $SWARM_NAME-$i "$TOKEN" "$IMAGE" "" "--kv-store=consul:$CONSUL_IP:8500 --label com.docker.network.driver.overlay.neighbor_ip=$MASTER_IP" $DRIVER
+      scripts/create-node.sh $SWARM_NAME-$i "$TOKEN" "$IMAGE" "" "--engine-opt=\"kv-store=consul:$CONSUL_IP:8500\" --engine-label=\"com.docker.network.driver.overlay.neighbor_ip=$MASTER_IP\"" $DRIVER
     done
 else
-    seq $SWARM_SIZE | parallel scripts/create-node.sh $SWARM_NAME-{} $TOKEN $IMAGE "\ " "--kv-store=consul:$CONSUL_IP:8500\ --label\ com.docker.network.driver.overlay.neighbor_ip=$MASTER_IP" $DRIVER
+    seq $SWARM_SIZE | parallel scripts/create-node.sh $SWARM_NAME-{} $TOKEN $IMAGE "\ " "--engine-opt=\"kv-store=consul:$CONSUL_IP:8500\"\ --engine-label=\"com.docker.network.driver.overlay.neighbor_ip=$MASTER_IP\"" $DRIVER
 fi
