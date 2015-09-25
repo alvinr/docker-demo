@@ -1,0 +1,15 @@
+web:
+  build: .
+  ports:
+   - "5000:5000"
+  links:
+   - aerospike
+  hostname: dev.dockercon.com
+  environment:
+    - AEROSPIKE_HOST=dev_aerospike_1   
+aerospike:
+  image: aerospike/aerospike-server:latest
+  ports:
+    - "3000:3000"
+    - "3001:3001"
+    - "3003:3003"
