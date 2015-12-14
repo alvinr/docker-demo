@@ -1,6 +1,0 @@
-mongodb:
-  extends:
-    file: mdb_base.yaml
-    service: mongodb_service
-  ports: 
-    - "27017:27017"

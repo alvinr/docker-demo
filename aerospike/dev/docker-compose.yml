@@ -4,12 +4,11 @@ web:
    - "5000:5000"
   links:
    - aerospike
-  hostname: dev.dockercon.com
+  hostname: dev.awesome-counter.com
   environment:
     - AEROSPIKE_HOST=dev_aerospike_1   
 aerospike:
-  image: aerospike/aerospike-server:latest
-  ports:
-    - "3000:3000"
-    - "3001:3001"
-    - "3003:3003"
+  image: alvinr/aerospike-server:latest
+  volumes: 
+    - $PWD:/opt/aerospike/etc
+  command: -foreground --config-file /opt/aerospike/etc/aerospike.conf

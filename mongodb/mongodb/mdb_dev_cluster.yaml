@@ -1,0 +1,69 @@
+mongodb:
+   extends:
+     file: mdb_base.yaml
+     service: mongodb_switch_service
+   command: --configdb mongodb_config1_1:27017,mongodb_config2_1:27017,mongodb_config3_1:27017
+   environment:
+     - "constraint:node==swarm-0"     
+rs1a:
+  extends:
+    file: mdb_base.yaml
+    service: mongodb_service_replset_1
+  volumes: 
+    - /data/db/s1rs1a:/data/db
+
+rs1b:
+  extends:
+    file: mdb_base.yaml
+    service: mongodb_service_replset_1
+  volumes: 
+    - /data/db/s1rs1b:/data/db
+
+rs1c:
+  extends:
+    file: mdb_base.yaml
+    service: mongodb_service_replset_1
+  volumes: 
+    - /data/db/s1rs1c:/data/db
+
+rs2a:
+  extends:
+    file: mdb_base.yaml
+    service: mongodb_service_replset_2
+  volumes: 
+    - /data/db/s2rs2a:/data/db
+
+rs2b:
+  extends:
+    file: mdb_base.yaml
+    service: mongodb_service_replset_2
+  volumes: 
+    - /data/db/s2rs2b:/data/db
+
+rs2c:
+  extends:
+    file: mdb_base.yaml
+    service: mongodb_service_replset_2
+  volumes: 
+    - /data/db/s2rs2c:/data/db
+
+config1:
+  extends:
+    file: mdb_base.yaml
+    service: mongodb_config_service
+  volumes: 
+    - /data/db/config1:/data/db
+
+config2:
+  extends:
+    file: mdb_base.yaml
+    service: mongodb_config_service
+  volumes: 
+    - /data/db/config2:/data/db
+
+config3:
+  extends:
+    file: mdb_base.yaml
+    service: mongodb_config_service
+  volumes: 
+    - /data/db/config3:/data/db

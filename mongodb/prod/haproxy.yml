@@ -1,0 +1,16 @@
+haproxy-server:
+  image: alvinr/interlock-haproxy
+  environment:
+   - "DOCKER_HOST"
+  volumes:
+  # boot2docker images use the following
+  - "/var/lib/boot2docker:/etc/docker"
+  # ubuntu images use
+  #- "/etc/docker:/etc/docker"
+  ports:
+   - "80:8080"
+haproxy-app:
+  labels:
+   - "com.interlock.networkmode=internal"
+   - "com.interlock.port=5000"
+  hostname: prod.dockercon.com

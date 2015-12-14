@@ -1,0 +1,9 @@
+aerospike-server:
+  image: aerospike/aerospike-server:latest
+  labels:
+    - "com.aerospike.cluster=awesome-counter"
+  volumes:
+    - "$PWD:/opt/aerospike/etc/"
+  ports:
+    - 9918    
+  command: --foreground --config-file /opt/aerospike/etc/aerospike.conf

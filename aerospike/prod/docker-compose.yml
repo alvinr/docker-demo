@@ -1,0 +1,21 @@
+haproxy:
+  extends:
+    file: haproxy.yml
+    service: haproxy-server
+  environment:
+    - "constraint:node==swarm-0"
+  net: "bridge"  
+web:
+  image: alvinr/demo-webapp-as:latest
+  extends:
+    file: haproxy.yml
+    service: haproxy-app
+  environment:
+    - AEROSPIKE_HOST=prod_aerospike_1   
+aerospike:
+  extends:
+    file: aes_base.yml
+    service: aerospike-server
+  image: alvinr/aerospike-server:latest
+  environment:
+    - "affinity:com.aerospike.cluster!=awesome-counter"

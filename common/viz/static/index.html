@@ -1,0 +1,200 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Swarm Console</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 14px "Helvetica Neue", Arial; color: #556473;}
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #console {
+        margin: 5rem 5rem 0 5rem;
+      }
+      svg {
+        margin: 2rem 5rem;
+      }
+      circle {
+        fill: rgb(31, 119, 180);
+        fill-opacity: .25;
+        stroke: rgb(31, 119, 180);
+        stroke-width: 1px;
+      }
+
+      .leaf circle {
+        fill: #ff7f0e;
+        fill-opacity: 1;
+      }
+
+      text {
+        font: 14px sans-serif;
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var params={};window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(str,key,value){params[key] = value;});
+      var host_width = 250;
+      var host_height = 200;
+      var host_spacing = 20;
+      var width = window.innerWidth;
+      var height = window.innerHeight;
+      var hosts_per_line = ((width / (host_width + host_spacing)) >> 0);
+      var gutter = 10;
+      var container_width = 30;
+      var container_height = 30;
+      var container_x = 100;
+      var container_y = 100;
+      var container_per_line = ((host_width / (container_width + gutter)) >> 0);
+      var getImageUrl = function (d) {
+        if (d && d.image) {
+          if (d.image.indexOf('webapp') >= 0) {
+            return "https://cloud.githubusercontent.com/assets/559953/8238706/3af4cc2e-15ac-11e5-99e9-6feaaf842790.png";
+          } else if (d.image.indexOf('aerospike') >= 0 || d.image.indexOf('redis') >= 0 || d.image.indexOf('mongo') >=0) {
+            return "https://cloud.githubusercontent.com/assets/559953/8245172/638d81a2-15df-11e5-9b6c-ec5d4d5c471c.png";
+          } else if (d.image.indexOf('haproxy') >= 0 || d.image.indexOf('interlock') >= 0) {
+            return "https://cloud.githubusercontent.com/assets/559953/8245174/6622b7fc-15df-11e5-9e36-5f3368642941.png";
+          } else {
+            return "https://cloud.githubusercontent.com/assets/559953/8238706/3af4cc2e-15ac-11e5-99e9-6feaaf842790.png";
+          }
+        } else {
+          return "https://cloud.githubusercontent.com/assets/559953/8238706/3af4cc2e-15ac-11e5-99e9-6feaaf842790.png";
+        }
+      };
+      var drawViz = function(hosts) {
+        //no need to nuke the existing viz every cycle: d3 has a nice behaviro when you update the model.
+        d3.select("svg").remove();
+        console.log(JSON.stringify(hosts));
+        //height = (((hosts.length / hosts_per_line) >> 0) +1)*(host_height + host_spacing)*2;
+        var nhosts = hosts.length;
+        var ncont = 0;
+        for (var host in hosts) {
+          ncont = ncont + hosts[host].containers.length;
+        }
+        /*$('#hosts').text(nhosts);
+        $('#containers').text(ncont);*/
+        var svgContainer = d3.select("body").append("svg")
+                                            .attr("width", width)
+                                            .attr("height", height)
+
+        var maxh = 0;
+        function host_h(d,i) {
+          //console.log(d.name); console.log(((d.containers.length/container_per_line)>>0) + 1); console.log(((((d.containers.length/container_per_line)>>0) + 1) * (container_height + gutter)));
+          var h = ((((d.containers.length/container_per_line)>>0) + 1) * (container_height + gutter) + 3 * gutter) + 45;
+          maxh = Math.max(maxh, h);
+          return h;
+        };
+        maxh = host_h(hosts[0],0);
+        var hostsViz = svgContainer.selectAll("g")
+                                     .data(hosts)
+                                     .enter()
+                                     .append("g")
+                                     .attr("transform", function(d, i) { return 'translate(' +
+                                                                             (i % hosts_per_line)*(host_width + host_spacing) +
+                                                                             ',' +
+                                                                             (host_spacing + ((i / hosts_per_line) >> 0)*(maxh + host_spacing)) +
+                                                                        ')'
+                                                        });
+
+        var hostsRect = hostsViz.append("rect")
+                .attr("x", 1)
+                .attr("y", 0)
+                .attr("height", maxh + 10)
+                .attr("width", host_width)
+                .attr("stroke-width", 2)
+                .attr("stroke", '#24B8EB')
+                .attr("rx", 3)
+                .attr("ry", 3)
+                .style("fill", 'white');
+
+        hostsViz.append("rect")
+                         .attr("x", 1)
+                         .attr("y", 0)
+                         .attr("width", host_width)
+                         .attr("height", 30)
+                         .attr("fill", "#24B8EB");
+
+        hostsViz.append("text")
+                         .attr("x", gutter)
+                         .attr("y", 2*gutter)
+                         .attr("height", 20)
+                         .text( function (d) { return d.name; })
+                         .attr("font-family", "sans-serif")
+                         .attr("font-size", "14px")
+                         .attr("fill", "white");
+
+         var containersList = hostsViz.selectAll("g")
+                     .data(function(d) { return d.containers; })
+                     .enter()
+                     .append("g")
+                     .attr("transform", function(d, i) { return 'translate(' + ((i % container_per_line) * (container_width + gutter) +  ',' + ((i/container_per_line)>>0) * (container_height + gutter)) + ')'});
+
+        /*containersList.append("rect")
+               .attr("x", gutter + 1)
+               .attr("y", 3*gutter + 10)
+               .attr("height", container_height)
+               .attr("width", container_width)
+               .attr("rx", 3)
+               .attr("ry", 3)
+               .style("fill", '#24B8EB');*/
+        containersList.append("image")
+                .attr("xlink:href", function (d) { return getImageUrl(d); })
+                .attr("x", gutter + 1)
+                .attr("y", 3*gutter + 10)
+                .attr("height", container_height)
+                .attr("width", container_width);
+/* do tooltip instead
+        containersList.append("text")
+                          .attr("x", gutter)
+                          .attr("y", 3*gutter)
+                          .attr("height", 20)
+                          .text( function (d) { return (d.name + '  ' + d.image); })
+                          .attr("font-family", "sans-serif")
+                          .attr("font-size", "10px")
+                          .attr("fill", "white");
+                          */
+        };
+      var socket = io();
+      socket.on('containers', function(containers){
+        $('#containers').empty();
+        var hosts = [];
+        var data = containers;
+        for (host in data.hosts) {
+          var sortedCList = data.hosts[host].sort(function (a, b) {
+            if (a.image > b.image) {
+              return 1;
+            }
+            if (a.image < b.image) {
+              return -1;
+            }
+            return 0;
+          });
+          hosts.push({
+            name:host,
+            containers: sortedCList,
+          });
+        }
+        hosts.sort(function (a, b) {
+          if (a.name > b.name) {
+            return 1;
+          }
+          if (a.name < b.name) {
+            return -1;
+          }
+          return 0;
+        });
+        drawViz(hosts);
+      });
+    </script>
+  </head>
+  <body>
+    <div id="console">
+      <div id="hosts"></div>
+      <div id="containers"></div>
+    </div>
+  </body>
+</html>

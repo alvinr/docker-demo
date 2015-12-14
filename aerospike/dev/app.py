@@ -2,13 +2,15 @@ from flask import Flask, request
 import aerospike
 import os
 import datetime
+import time
 import socket
 import uuid
 
 app = Flask(__name__)
 
 config = {
-  'hosts': [ (os.environ.get('AEROSPIKE_HOST', 'aerospike_aerospike_1'), 3000) ]
+  'hosts': [ (os.environ.get('AEROSPIKE_HOST', 'aerospike_aerospike_1'), 3000) ],
+  'policies': { 'key': aerospike.POLICY_KEY_SEND }
 }
 
 host = socket.gethostbyname(socket.gethostname())
@@ -26,7 +28,9 @@ def hello():
 
         #key = ("test", "hits", foo)
         # Insert the 'hit' record
-        client.put(("test", "hits", foo), {"server": host, "ts": datetime.datetime.utcnow()} )
+        # ts = datetime.datetime.utcnow()
+        ts =  int(round(time.time() * 1000))
+        client.put(("test", "hits", foo), {"server": host, "ts": ts} )
 
         # Maintain our summaries for the grand total and for each server
         #key = ("test", "summary", "total_hits")
