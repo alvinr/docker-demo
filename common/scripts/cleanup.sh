@@ -11,5 +11,7 @@ function do_dir() {
 do_dir "dev"
 do_dir "prod"
 do_dir "mongodb"
+do_dir "aerospike"
+do_dir "redis"
 
 export PS1="\h:\W$ "

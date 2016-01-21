@@ -8,7 +8,6 @@ web:
   environment:
     - AEROSPIKE_HOST=dev_aerospike_1   
 aerospike:
-  image: alvinr/aerospike-server:latest
+  image: aerospike/aerospike-server:latest
   volumes: 
-    - $PWD:/opt/aerospike/etc
-  command: -foreground --config-file /opt/aerospike/etc/aerospike.conf
+    - $PWD:/etc/aerospike

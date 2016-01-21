@@ -9,18 +9,19 @@
 
 Create dev environment:
 
-    $ common/scripts/create-dev.sh
+    $ cd common
+    $ scripts/create-dev.sh
     $ echo "$(docker-machine ip dev) dev.awesome-counter.com" | sudo tee -a /etc/hosts
 
 Create a Swarm:
 
     $ eval $(docker-machine env dev)
-    $ common/scripts/create-swarm.sh
+    $ scripts/create-swarm.sh
     $ echo "$(docker-machine ip swarm-0) prod.awesome-counter.com" | sudo tee -a /etc/hosts
 
 Start the Viz:
 
-     $ cd viz
+     $ cd common/viz
      $ source scripts/setup.sh
      $ scripts/up.sh swarm-0
      $ echo "$(docker-machine ip swarm-consul) viz.awesome-counter.com" | sudo tee -a /etc/hosts
@@ -40,10 +41,11 @@ The app will be available at http://dev.awesome-counter.com:5000
 To start app in production:
 
     $ cd prod/
-    $ docker $(docker-machine config swarm-0) network create --driver overlay prod
     $ source scripts/setup.sh
+    $ docker $(docker-machine config swarm-0) network create --driver overlay --internal prod
     $ docker-compose up -d
     $ docker $(docker-machine config swarm-0) network connect prod $(docker inspect -f "{{.Id}}" prod_haproxy_1)
+    $ docker $(docker-machine config swarm-0) network connect prod $(docker inspect -f "{{.Id}}" prod_discovery_1)
     $ docker-compose scale web=5
 
 The app will be available at http://prod.awesome-counter.com

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-ENGINE_URL=https://get.docker.com/builds/Linux/x86_64/docker-1.9.1-rc1
-B2D_URL=https://github.com/tianon/boot2docker-legacy/releases/download/v1.9.1-rc1/boot2docker.iso
+ENGINE_URL=https://get.docker.com/builds/Linux/x86_64/docker-1.10.0-rc1
+B2D_URL=https://github.com/tianon/boot2docker-legacy/releases/download/v1.10.0-rc1/boot2docker.iso
 DRIVER=vmwarefusion
 SWARM_SIZE=3
 

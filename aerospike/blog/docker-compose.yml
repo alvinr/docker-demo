@@ -1,0 +1,21 @@
+aerospike:
+    image: aerospike/aerospike-server:3.7.1
+    volumes:
+      - "$PWD:/etc/aerospike"
+    labels:
+      - "com.aerospike.cluster=awesome-counter"
+    environment:
+      - "affinity:com.aerospike.cluster!=awesome-counter"
+    net: prod
+
+discovery:
+    image: rguo/interlock
+    environment:
+      - "DOCKER_HOST"
+      - "constraint:node==blog-0"
+      - AEROSPIKE_NETWORK_NAME=prod
+      - AEROSPIKE_CLUSTER_NAME=awesome-counter
+    volumes:
+     - "/var/lib/boot2docker:/etc/docker"
+    command: "--swarm-url=$DOCKER_HOST --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin aerospike start"
+    net: bridge
