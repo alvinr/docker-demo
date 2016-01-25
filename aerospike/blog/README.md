@@ -23,7 +23,7 @@ To start app in production:
     $ cd prod/
     $ docker $(docker-machine config blog-0) network create --driver overlay --internal prod
     $ docker-compose up -d
-    $ docker $(docker-machine config blog-0) network connect prod $(docker inspect -f "{{.Id}}" blog_discovery_1)
+    $ docker $(docker-machine config blog-0) network connect prod blog_discovery_1
 
 ## Running demo - Part Two: Scale the DB
 

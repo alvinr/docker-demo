@@ -44,8 +44,8 @@ To start app in production:
     $ source scripts/setup.sh
     $ docker $(docker-machine config swarm-0) network create --driver overlay --internal prod
     $ docker-compose up -d
-    $ docker $(docker-machine config swarm-0) network connect prod $(docker inspect -f "{{.Id}}" prod_haproxy_1)
-    $ docker $(docker-machine config swarm-0) network connect prod $(docker inspect -f "{{.Id}}" prod_discovery_1)
+    $ docker $(docker-machine config swarm-0) network connect prod prod_haproxy_1
+    $ docker $(docker-machine config swarm-0) network connect prod prod_discovery_1
     $ docker-compose scale web=5
 
 The app will be available at http://prod.awesome-counter.com
