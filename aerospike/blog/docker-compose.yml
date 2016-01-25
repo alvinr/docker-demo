@@ -9,7 +9,7 @@ aerospike:
     net: prod
 
 discovery:
-    image: rguo/interlock
+    image: aerospike/interlock:latest
     environment:
       - "DOCKER_HOST"
       - "constraint:node==blog-0"

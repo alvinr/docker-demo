@@ -1,5 +1,5 @@
 discovery:
-  image: rguo/interlock:latest
+  image: aerospike/interlock:latest
   environment:
     - "DOCKER_HOST"
   volumes:

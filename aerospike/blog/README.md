@@ -9,7 +9,6 @@
 
 Create a Swarm:
 
-    $ eval $(docker-machine env dev)
     $ ./create-swarm.sh
     $ echo "$(docker-machine ip blog-0) prod.awesome-counter.com" | sudo tee -a /etc/hosts
 
@@ -20,8 +19,7 @@ The app will be available at http://viz.awesome-counter.com:3000
 To start app in production:
 
     $ eval $(docker-machine env --swarm blog-0)
-    $ cd prod/
-    $ docker $(docker-machine config blog-0) network create --driver overlay --internal prod
+    $ docker network create --driver overlay --internal prod
     $ docker-compose up -d
     $ docker $(docker-machine config blog-0) network connect prod blog_discovery_1
 

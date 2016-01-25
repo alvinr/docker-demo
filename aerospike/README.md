@@ -42,7 +42,7 @@ To start app in production:
 
     $ cd prod/
     $ source scripts/setup.sh
-    $ docker $(docker-machine config swarm-0) network create --driver overlay --internal prod
+    $ docker $(docker-machine config --swarm swarm-0) network create --driver overlay --internal prod
     $ docker-compose up -d
     $ docker $(docker-machine config swarm-0) network connect prod prod_haproxy_1
     $ docker $(docker-machine config swarm-0) network connect prod prod_discovery_1
@@ -53,17 +53,10 @@ The app will be available at http://prod.awesome-counter.com
 ## Running demo - Part Two: Scale the DB
 
     $ docker-compose scale aerospike=3
-    $ docker run --net prod aerospike/aerospike-tools asinfo -v "tip:host=$(docker inspect -f '{{ .NetworkSettings.Networks.prod.IPAddress }}' prod_aerospike_2);port=3002" -h prod_aerospike_1
-    $ docker run --net prod aerospike/aerospike-tools asinfo -v "tip:host=$(docker inspect -f '{{ .NetworkSettings.Networks.prod.IPAddress }}' prod_aerospike_3);port=3002" -h prod_aerospike_1
 
  You can log onto the Aerospike using by
-    $ docker run -it --rm --net prod aerospike/aerospike-tools aql -h prot_aerospike_1 -p 3000
+    $ docker run -it --rm --net prod aerospike/aerospike-tools aql -h prot_aerospike_1
 
-## Running demo - Part Three: Move the DB
-<TBD> need to look at runc checkpoint & restore, examples here https://github.com/crosbymichael/uhaul/blob/master/node.go
-
-## Cleaning up the demo
-    $ scripts/cleanup.sh
 
 # Building the images
 If you want to rebuild the images for any reason, you will need to build, push and update the compose files as necessary (since you will push to a new repo)

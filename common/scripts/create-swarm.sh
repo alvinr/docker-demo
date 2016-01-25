@@ -74,9 +74,9 @@ fi
 if docker network ls | grep -q "prod"
   then 
     echo "prod already created, removing first"
-    docker $(docker-machine config swarm-0) network rm prod
+    docker $(docker-machine config --swarm swarm-0) network rm prod
 fi
-docker $(docker-machine config swarm-0) network create --driver overlay prod
+docker $(docker-machine config --swarm swarm-0) network create --driver overlay --internal prod
 
 # docker $(docker-machine config swarm-0) network create --driver overlay prod
 

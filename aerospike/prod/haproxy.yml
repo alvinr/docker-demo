@@ -1,5 +1,5 @@
 haproxy-server:
-  image: rguo/interlock:latest
+  image: aerospike/interlock:latest
   environment:
     - "DOCKER_HOST"
   volumes:
@@ -12,9 +12,6 @@ haproxy-server:
   command: "--swarm-url=$DOCKER_HOST --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin haproxy start"
 
 haproxy-app:
-  # labels:
-  #  - "com.interlock.networkmode=internal"
-  #  - "com.interlock.port=5000"
   hostname: prod.awesome-counter.com
   ports:
     - 5000

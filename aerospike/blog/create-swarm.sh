@@ -46,4 +46,4 @@ docker-machine create \
   --engine-opt="cluster-advertise=eth0:2376" \
   blog-1
 
-  docker $(docker-machine config blog-0) network create --driver overlay --internal prod
+  docker $(docker-machine config --swarm blog-0) network create --driver overlay --internal prod
