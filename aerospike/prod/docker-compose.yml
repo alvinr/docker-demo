@@ -16,7 +16,6 @@ web:
     - AEROSPIKE_HOST=prod_aerospike_1
   net: prod
 
-
 discovery:
   extends:
     file: aes_base_cluster.yml
@@ -37,4 +36,3 @@ aerospike:
   environment:
     - "affinity:com.aerospike.cluster!=awesome-counter"
   net: prod
-

@@ -19,7 +19,7 @@ The app will be available at http://viz.awesome-counter.com:3000
 To start app in production:
 
     $ eval $(docker-machine env --swarm blog-0)
-    $ docker network create --driver overlay --internal prod
+    $ docker $(docker-machine config --swarm blog-0) network create --driver overlay --internal prod
     $ docker-compose up -d
     $ docker $(docker-machine config blog-0) network connect prod blog_discovery_1
 
