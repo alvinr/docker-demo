@@ -7,12 +7,22 @@ SWARM_SIZE=3
 
 if [ "$DRIVER" == "vmwarefusion" ]
 then
-  B2D_OPT="--vmwarefusion-boot2docker-url=$B2D_URL"
+#  B2D_OPT="--vmwarefusion-boot2docker-url=$B2D_URL"
+  B2D_OPT=""
+  ENGINE_OPT=""
 else
   B2D_OPT=""
+  ENGINE_OPT="--engine-install-url=$ENGINE_URL"
 fi
 
-ENGINE_OPT="--engine-install-url=$ENGINE_URL"
+#if [ "$DRIVER" == "vmwarefusion" ]
+#then
+#  B2D_OPT="--vmwarefusion-boot2docker-url=$B2D_URL"
+#else
+#  B2D_OPT=""
+#fi
+
+#ENGINE_OPT="--engine-install-url=$ENGINE_URL"
 
 # Craete the Machine to run Consul
 
@@ -76,7 +86,7 @@ if docker network ls | grep -q "prod"
     echo "prod already created, removing first"
     docker $(docker-machine config --swarm swarm-0) network rm prod
 fi
-docker $(docker-machine config --swarm swarm-0) network create --driver overlay --internal prod
+docker $(docker-machine config --swarm swarm-0) network create --driver overlay prod
 
 # docker $(docker-machine config swarm-0) network create --driver overlay prod
 

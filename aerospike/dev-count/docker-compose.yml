@@ -1,0 +1,13 @@
+web:
+  build: .
+  ports:
+   - "5000:5000"
+  links:
+   - aerospike
+  hostname: dev.awesome-counter.com
+  environment:
+    - AEROSPIKE_HOST=devcount_aerospike_1   
+aerospike:
+  image: aerospike/aerospike-server:latest
+  volumes: 
+    - $PWD:/etc/aerospike

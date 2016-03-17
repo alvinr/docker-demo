@@ -6,7 +6,7 @@ web:
    - aerospike
   hostname: dev.awesome-counter.com
   environment:
-    - AEROSPIKE_HOST=dev_aerospike_1   
+    - AEROSPIKE_HOST=devvote_aerospike_1   
 aerospike:
   image: aerospike/aerospike-server:latest
   volumes: 

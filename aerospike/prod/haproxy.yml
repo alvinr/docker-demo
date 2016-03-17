@@ -13,5 +13,7 @@ haproxy-server:
 
 haproxy-app:
   hostname: prod.awesome-counter.com
+  environment:
+    - AEROSPIKE_HOST=prod_aerospike_1
   ports:
     - 5000
