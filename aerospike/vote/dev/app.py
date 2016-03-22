@@ -17,11 +17,11 @@ hostname = socket.gethostname()
 app = Flask(__name__)
 
 config = {
-  'hosts': [ (os.environ.get('AEROSPIKE_HOST', 'devvote_aerospike_1'), 3000) ],
+  'hosts': [ (os.environ.get('AEROSPIKE_HOST', 'prod_aerospike_1'), 3000) ],
   'policies': { 'key': aerospike.POLICY_KEY_SEND }
 }
 
-host = socket.gethostbyname(socket.gethostname())
+host = socket.gethostbyname(hostname)
 
 @app.route("/env", methods=['GET'])
 def dump_env():

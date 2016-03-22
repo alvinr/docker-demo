@@ -1,0 +1,19 @@
+haproxy-server:
+  image: aerospike/interlock:latest
+  environment:
+    - "DOCKER_HOST"
+  volumes:
+  # boot2docker images use the following
+   - "/var/lib/boot2docker:/etc/docker"
+  # ubuntu images use
+  #- "/etc/docker:/etc/docker"
+  ports:
+    - "80:8080"
+  command: "--swarm-url=$DOCKER_HOST --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin haproxy start"
+
+haproxy-app:
+  hostname: prod.myapp.com
+  environment:
+    - AEROSPIKE_HOST=prod_aerospike_1
+  ports:
+    - 5000

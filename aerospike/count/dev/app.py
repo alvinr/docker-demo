@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, make_response, render_template
 import aerospike
 import os
 import datetime
@@ -9,11 +9,14 @@ import uuid
 app = Flask(__name__)
 
 config = {
-  'hosts': [ (os.environ.get('AEROSPIKE_HOST', 'aerospike_aerospike_1'), 3000) ],
+  'hosts': [ (os.environ.get('AEROSPIKE_HOST', 'prod_aerospike_1'), 3000) ],
   'policies': { 'key': aerospike.POLICY_KEY_SEND }
 }
 
-host = socket.gethostbyname(socket.gethostname())
+hostname = socket.gethostname()
+host = socket.gethostbyname(hostname)
+
+
 
 @app.route('/')
 def hello():
@@ -42,7 +45,16 @@ def hello():
         (key, meta, bins) = client.get(("test","summary","total_hits"))
         
         # Return the updated web page
-        return "Hello World! I have been seen by %s." % bins["total"]
+        #return "Hello World! I have been seen by %s." % bins["total"]
+
+        resp = make_response(render_template(
+            'index.html',
+            counter=bins["total"],
+            hostname=hostname,
+            node=host
+        ))
+
+        return resp
 
     except Exception as e:
         return "Hummm - %s looks like we have an issue, let me try again" % "err: {0}".format(e)

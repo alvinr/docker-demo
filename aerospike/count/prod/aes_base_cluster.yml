@@ -1,0 +1,16 @@
+discovery:
+  image: aerospike/interlock:latest
+  environment:
+    - "DOCKER_HOST"
+  volumes:
+  # boot2docker images use the following
+   - "/var/lib/boot2docker:/etc/docker"
+  # ubuntu images use
+  #- "/etc/docker:/etc/docker"
+  command: "--swarm-url=$DOCKER_HOST --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin aerospike start"
+
+aerospike:
+  image: aerospike/aerospike-server:latest
+  volumes:
+    - "$PWD:/etc/aerospike"
+  #command: --foreground --config-file /opt/aerospike/etc/aerospike.conf  

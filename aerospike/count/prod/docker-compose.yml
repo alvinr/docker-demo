@@ -1,0 +1,37 @@
+haproxy:
+  extends:
+    file: haproxy.yml
+    service: haproxy-server
+  environment:
+    - "constraint:node==swarm-0"
+  net: bridge
+
+web:
+  image: alvinr/demo-webapp-count:latest
+  extends:
+    file: haproxy.yml
+    service: haproxy-app
+  environment:
+    - AEROSPIKE_HOST=prod_aerospike_1
+  net: prod
+
+discovery:
+  extends:
+    file: aes_base_cluster.yml
+    service: discovery
+  environment:
+    - "constraint:node==swarm-0"
+    - AEROSPIKE_NETWORK_NAME=prod
+    - AEROSPIKE_CLUSTER_NAME=prod-cluster
+  net: bridge
+
+aerospike:
+  extends:
+    file: aes_base_cluster.yml
+    service: aerospike
+  image: aerospike/aerospike-server:3.7.4
+  labels:
+    - "com.aerospike.cluster=prod-cluster"
+  environment:
+    - "affinity:com.aerospike.cluster!=prod-cluster"
+  net: prod

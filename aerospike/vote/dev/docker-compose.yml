@@ -4,9 +4,9 @@ web:
    - "5000:5000"
   links:
    - aerospike
-  hostname: dev.awesome-counter.com
+  hostname: dev.myapp.com
   environment:
-    - AEROSPIKE_HOST=devcount_aerospike_1   
+    - AEROSPIKE_HOST=dev_aerospike_1   
 aerospike:
   image: aerospike/aerospike-server:latest
   volumes: 
