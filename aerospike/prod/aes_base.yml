@@ -1,7 +1,0 @@
-aerospike-server:
-  image: aerospike/aerospike-server:latest
-  labels:
-    - "com.aerospike.cluster=awesome-counter"
-  volumes:
-    - "$PWD:/etc/aerospike/"
-#  command: --foreground --config-file /opt/aerospike/etc/aerospike.conf
