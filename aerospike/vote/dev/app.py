@@ -53,10 +53,29 @@ def index():
 
     key = ("test", "votes", voter_id)
 
-    data = {'vote': vote, 'ts': time_ms}
-
-    client.put(key, {"vote": vote, "ts": time_ms, 'voter_id': voter_id} )    
-    client.list_append(key, "history", data)
+    operations = [
+        {
+            "op" : aerospike.OPERATOR_WRITE,
+            "bin" : "vote",
+            "val" : vote
+        },
+        {
+            "op" : aerospike.OPERATOR_WRITE,
+            "bin" : "ts",
+            "val" : time_ms
+        },
+        {
+            "op" : aerospike.OPERATOR_WRITE,
+            "bin" : "voter_id",
+            "val" : voter_id
+        },
+        {
+            "op" : aerospike.OP_LIST_APPEND,
+            "bin" : "history",
+            "val" : {'vote': vote, 'ts': time_ms}
+        }
+    ]
+    client.operate(key, operations)
 
     client.increment(("test", "summary", "total_votes"), "total", 1)
     client.increment(("test", "summary", host), "total", 1) 
