@@ -55,7 +55,7 @@ The app will be available at http://prod.awesome-counter.com
     $ docker-compose scale aerospike=3
 
  You can log onto the Aerospike using by
-    $ docker run -it --rm --net prod aerospike/aerospike-tools aql -h prot_aerospike_1
+    $ docker run -it --rm --net prod aerospike/aerospike-tools aql -h prod_aerospike_1
 
 
 # Building the images
