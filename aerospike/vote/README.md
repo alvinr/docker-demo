@@ -48,14 +48,17 @@ To start app in production:
     $ docker $(docker-machine config swarm-0) network connect prod prod_discovery_1
     $ docker-compose scale web=5
 
-The app will be available at http://prod.awesome-counter.com
+The app will be available at http://prod.myapp.com
+
+ You can log onto the Aerospike and look at data with aql
+    $ docker run -it --rm --net prod aerospike/aerospike-tools aql -h prod_aerospike_1
 
 ## Running demo - Part Two: Scale the DB
 
     $ docker-compose scale aerospike=3
 
- You can log onto the Aerospike using by
-    $ docker run -it --rm --net prod aerospike/aerospike-tools aql -h prod_aerospike_1
+ You can look at the cluster topology with 
+    $ docker run -it --rm --net prod aerospike/aerospike-tools asadm -e i -h prod_aerospike_1
 
 
 # Building the images
