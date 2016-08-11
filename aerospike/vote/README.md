@@ -1,7 +1,7 @@
 # Orchestration & Networking demo
 
 ## Cavets
-* has been tested on os-x 10.10 only
+* has been tested on os-x 10.10 & 10.11
 * scripts will create machines based on the vmwarefusion driver. If you don't have that, then you will need to make some changes
 * because boot2docker.iso is used, the locations of files will change if you use Ubuntu or something else. 
 
@@ -50,7 +50,7 @@ To start app in production:
 
 The app will be available at http://prod.myapp.com
 
- You can log onto the Aerospike and look at data with aql
+You can log onto the Aerospike and look at data with aql
 
     $ docker run -it --rm --net prod aerospike/aerospike-tools aql -h prod_aerospike_1
 
@@ -61,7 +61,7 @@ The app will be available at http://prod.myapp.com
 
     $ docker-compose scale aerospike=3
 
- You can look at the cluster topology with
+You can look at the cluster topology with
 
     $ docker run -it --rm --net prod aerospike/aerospike-tools asadm -e i -h prod_aerospike_1
 
