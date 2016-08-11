@@ -54,6 +54,9 @@ The app will be available at http://prod.myapp.com
 
     $ docker run -it --rm --net prod aerospike/aerospike-tools aql -h prod_aerospike_1
 
+    aql> select * from test.votes
+    aql> select * from test.summary
+
 ## Running demo - Part Two: Scale the DB
 
     $ docker-compose scale aerospike=3
