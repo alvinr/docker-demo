@@ -34,6 +34,7 @@ To start app in development:
 
     $ cd dev/
     $ source scripts/setup.sh
+    $ docker-compose build
     $ docker-compose up
 
 The app will be available at http://dev.awesome-counter.com:5000
