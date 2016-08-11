@@ -1,7 +1,7 @@
 # Orchestration & Networking demo
 
 ## Cavets
-* has been tested on os-x 10.10 only
+* has been tested on os-x 10.10 and 10.11
 * scripts will create machines based on the vmwarefusion driver. If you don't have that, then you will need to make some changes
 * because boot2docker.iso is used, the locations of files will change if you use Ubuntu or something else. 
 
@@ -34,6 +34,7 @@ To start app in development:
 
     $ cd dev/
     $ source scripts/setup.sh
+    $ docker-compose build
     $ docker-compose up
 
 The app will be available at http://dev.awesome-counter.com:5000
