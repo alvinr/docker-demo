@@ -1,0 +1,15 @@
+web:
+  build: .
+  ports:
+   - "5000:5000"
+  links:
+   - mariadb
+  hostname: dev.myapp.com
+  environment:
+    - MARIADB_HOST=dev_mariadb_1   
+mariadb:
+  image: mariadb:latest
+  environment:
+    - MYSQL_ROOT_PASSWORD=foo
+#  volumes: 
+#    - $PWD/data:/var/lib/mysql

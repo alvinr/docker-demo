@@ -1,0 +1,37 @@
+haproxy:
+  extends:
+    file: haproxy.yml
+    service: haproxy-server
+  environment:
+    - "constraint:node==swarm-0"
+  net: bridge
+
+web:
+  image: alvinr/demo-webapp-vote:latest
+  extends:
+    file: haproxy.yml
+    service: haproxy-app
+  environment:
+    - MARIADB_HOST=prod_mariadb_1
+  net: prod
+
+discovery:
+  extends:
+    file: mariadb_base_cluster.yml
+    service: discovery
+  environment:
+    - "constraint:node==swarm-0"
+    - MARIADB_NETWORK_NAME=prod
+    - MARIADB_CLUSTER_NAME=prod-cluster
+  net: bridge
+
+maraidb:
+  extends:
+    file: mariadb_base.yml
+    service: mariadb
+  image: mariadb:10.1.16
+  labels:
+    - "com.mariadb.cluster=prod-cluster"
+  environment:
+    - "affinity:com.mariadb.cluster!=prod-cluster"
+  net: prod
