@@ -50,21 +50,17 @@ To start app in production:
 
 The app will be available at http://prod.myapp.com
 
-You can log onto the Aerospike and look at data with aql
+You can log onto the MariaDB and look at data
 
-    $ docker run -it --rm --net prod aerospike/aerospike-tools aql -h prod_aerospike_1
+    $ docker run -it --rm mariadb sh -c 'exec mysql -h"172.17.0.3" -P"3306" -uroot -p"foo"'
 
-    aql> select * from test.votes
-    aql> select * from test.summary
+    MariaDB [(none)]> use test
+    MariaDB [test]> select * from votes
+    MariaDB [test]> select * from summary;
 
 ## Running demo - Part Two: Scale the DB
-
-    $ docker-compose scale aerospike=3
-
-You can look at the cluster topology with
-
-    $ docker run -it --rm --net prod aerospike/aerospike-tools asadm -e i -h prod_aerospike_1
-
+!!!! TO BE COMPLETED - NEED TO INTEGRATE MAXSACLE
+    $ docker-compose scale mariadb=3
 
 # Building the images
 If you want to rebuild the images for any reason, you will need to build, push and update the compose files as necessary (since you will push to a new repo)
@@ -76,12 +72,3 @@ If you want to rebuild the images for any reason, you will need to build, push a
     $ eval "$(docker-machine env dev)"
     $ docker build -t $HUB_USER/demo-webapp-as .
     $ docker push $HUB_USER/demo-webapp-as
-
-## Build the aerospike images
-
-    $ HUB_USER="my hub user"
-
-    $ cd aerospike
-    $ eval "$(docker-machine env dev)"
-    $ docker build -t $HUB_USER/aerospike-server .
-    $ docker push $HUB_USER/aerospike-server
