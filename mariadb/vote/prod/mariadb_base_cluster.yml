@@ -1,15 +1,18 @@
-discovery:
-  image: interlock/interlock:latest
-  environment:
-    - "DOCKER_HOST"
-  volumes:
-  # boot2docker images use the following
-   - "/var/lib/boot2docker:/etc/docker"
-  # ubuntu images use
-  #- "/etc/docker:/etc/docker"
-  command: "--swarm-url=$DOCKER_HOST --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin aerospike start"
+version: '2'
 
-aerospike:
-  image: mariadb:latest
-  volumes:
-    - "$PWD:/var/lib/mysql"
+services:
+    mariadb:
+      image: mariadb:latest
+      environment:
+        MYSQL_ROOT_PASSWORD: foo
+        "com.mariadb.cluster": prod-cluster
+    #  volumes:
+    #    - "$PWD:/var/lib/mysql"
+
+    mariadb-shard:
+      image: mariadb:latest
+      environment:
+        MYSQL_ROOT_PASSWORD: foo
+        "com.mariadb.cluster": prod-cluster
+    #  volumes:
+    #    - "$PWD:/var/lib/mysql"

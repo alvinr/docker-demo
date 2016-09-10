@@ -19,8 +19,12 @@ db = None
 
 host = socket.gethostbyname(hostname)
 
-insert_vote = (
-  "INSERT INTO votes (voter_id, ts, vote) "
+record_vote = (
+  "INSERT INTO votes (voter_id, vote) "
+  "VALUES (%s, %s)" 
+  "ON DUPLICATE KEY update vote=%s")
+insert_vote_history = (
+  "INSERT INTO vote_history (voter_id, ts, vote) "
   "VALUES (%s, %s, %s)" )
 update_summary = (
   "INSERT INTO summary (category, total) "
@@ -62,7 +66,8 @@ def index():
     time_ms = long(time.time()*1000)
     app.logger.error('time %d', time_ms)
 
-    cursor.execute(insert_vote, (voter_id, time_ms, vote))
+    cursor.execute(record_vote, (voter_id, vote, vote))
+    cursor.execute(insert_vote_history, (voter_id, time_ms, vote))
     cursor.execute(update_summary, ("total_votes", 1))
     cursor.execute(update_summary, (host, 1))
 

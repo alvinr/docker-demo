@@ -1,37 +1,106 @@
-haproxy:
-  extends:
-    file: haproxy.yml
-    service: haproxy-server
-  environment:
-    - "constraint:node==swarm-0"
-  net: bridge
+version: '2'
 
-web:
-  image: alvinr/demo-webapp-vote:latest
-  extends:
-    file: haproxy.yml
-    service: haproxy-app
-  environment:
-    - MARIADB_HOST=prod_mariadb_1
-  net: prod
+networks:
+  back:
+    driver: overlay
+  # bridge:
+  #   external:
+  #     name: bridge    
+  # front:
+  #   external:
+  #     name: bridge
 
-discovery:
-  extends:
-    file: mariadb_base_cluster.yml
-    service: discovery
-  environment:
-    - "constraint:node==swarm-0"
-    - MARIADB_NETWORK_NAME=prod
-    - MARIADB_CLUSTER_NAME=prod-cluster
-  net: bridge
+services:
+  interlock:
+    extends:
+      file: haproxy.yml
+      service: interlock
+    # network_mode: "bridge"  
+    # network_mode: "prod_back"
+    environment:
+      - "constraint:node==swarm-0"
+    networks:
+      back:
 
-maraidb:
-  extends:
-    file: mariadb_base.yml
-    service: mariadb
-  image: mariadb:10.1.16
-  labels:
-    - "com.mariadb.cluster=prod-cluster"
-  environment:
-    - "affinity:com.mariadb.cluster!=prod-cluster"
-  net: prod
+  haproxy:
+    extends:
+      file: haproxy.yml
+      service: haproxy-server
+    environment:
+      - "constraint:node==swarm-0"
+    # ports:
+    #   - 80 
+    # network_mode: "bridge"  
+    # network_mode: "prod_back"
+    # network_mode: "prod_front"
+    # links:
+    #   - interlock:interlock
+    networks:
+      - back
+    # depends_on:
+    #   - interlock
+
+  web:
+    image: alvinr/demo-webapp-vote:mariadb
+    extends:
+      file: haproxy.yml
+      service: haproxy-app
+    environment:
+      MARIADB_HOST: mariadb
+#      - "constraint:node!=swarm-0"      
+    # networks:
+    #   - back
+    #   - bridge
+    # network_mode: "bridge"  
+    # network_mode: "prod_back"
+    # network_mode: "prod_front"
+    # links:
+    #   - mariadb:mariadb
+    networks:
+      - back
+    depends_on:
+        - haproxy
+
+  mariadb:
+    extends:
+      file: mariadb_base_cluster.yml
+      service: mariadb
+    image: mariadb:10.1.16
+    environment:
+      - "constraint:node==swarm-0"
+    networks:
+      back:
+        aliases:
+          - mariadb
+
+  mariadb-shard1:
+    extends:
+      file: mariadb_base_cluster.yml
+      service: mariadb-shard
+    image: mariadb:10.1.16
+    environment:
+      - "affinity:com.mariadb.cluster!=prod-cluster"
+    networks:
+      back:
+        aliases:
+          - mariadb_shard1
+    # links:
+    #   - mariadb:mariadb
+    depends_on:
+        - mariadb
+
+  mariadb-shard2:
+    extends:
+      file: mariadb_base_cluster.yml
+      service: mariadb-shard
+    image: mariadb:10.1.16
+    environment:
+      - "affinity:com.mariadb.cluster!=prod-cluster"
+    networks:
+      back:
+        aliases:
+          - mariadb_shard2
+    # links:
+    #   - mariadb:mariadb
+    depends_on:
+        - mariadb

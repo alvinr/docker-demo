@@ -7,5 +7,5 @@ export DOCKER_HOST=tcp://"$(docker-machine ip swarm-0):3376"
 export DOCKER_TLS_VERIFY=1
 export DOCKER_CERT_PATH="$HOME/.docker/machine/machines/swarm-0"
 
-docker-compose stop
-docker-compose rm -f
+docker-compose down
+docker-compose -f setup.yml down

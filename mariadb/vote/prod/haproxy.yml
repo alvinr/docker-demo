@@ -1,19 +1,44 @@
-haproxy-server:
-  image: interlock/interlock:latest
-  environment:
-    - "DOCKER_HOST"
-  volumes:
-  # boot2docker images use the following
-   - "/var/lib/boot2docker:/etc/docker"
-  # ubuntu images use
-  #- "/etc/docker:/etc/docker"
-  ports:
-    - "80:8080"
-  command: "--swarm-url=$DOCKER_HOST --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin haproxy start"
+version: "2"
 
-haproxy-app:
-  hostname: prod.myapp.com
-  environment:
-    - MARIADB_HOST=prod_mariadb_1
-  ports:
-    - 5000
+services:
+  interlock:
+    image: ehazlett/interlock:master
+    command: run -c /etc/interlock/config.toml
+    ports:
+      - 8080
+    volumes:
+      - ./config.toml:/etc/interlock/config.toml
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/boot2docker:/etc/docker:ro
+      - ./haproxy.cfg.template:/usr/local/etc/haproxy/haproxy.cfg.template:ro
+    environment:
+        INTERLOCK_CONFIG: |
+            DockerURL = "${SWARM_HOST}"
+            ListenAddr = ":8080"
+            TLSCACert = "/etc/docker/ca.pem"
+            TLSCert = "/etc/docker/server.pem"
+            TLSKey = "/etc/docker/server-key.pem"
+            [[Extensions]]
+            Name = "haproxy"
+            ConfigPath = "/usr/local/etc/haproxy/haproxy.cfg"
+            PidPath = "/var/run/haproxy.pid"
+            TemplatePath = "/usr/local/etc/haproxy/haproxy.cfg.template"
+            MaxConn = 1024
+            Port = 80
+            AdminUser = "admin"
+            AdminPass = "interlock"
+            # BackendOverrideAddress = "172.17.0.1"
+
+  haproxy-server:
+    image: haproxy:latest
+    ports:
+      - 80:80
+    labels:
+      - "interlock.ext.name=haproxy"
+
+  haproxy-app:
+    ports:
+      - 5000
+    labels:
+      - "interlock.hostname=prod"
+      - "interlock.domain=myapp.com"

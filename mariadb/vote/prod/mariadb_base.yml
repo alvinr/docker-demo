@@ -1,6 +1,9 @@
-mariadb:
-  image: mariadb:latest
-  labels:
-    - "com.mariadb.cluster=prod-cluster"
-  volumes:
-    - "$PWD:/var/lib/mysql"
+version: '2'
+
+services:
+    mariadb:
+      image: mariadb:latest
+      labels:
+        - "com.mariadb.cluster=prod-cluster"
+      # volumes:
+      #   - "$PWD:/var/lib/mysql"

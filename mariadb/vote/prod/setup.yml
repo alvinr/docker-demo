@@ -1,0 +1,45 @@
+version: '2'
+
+networks:
+  back:
+    external:
+      name: prod_back
+
+services:
+  install-spider:
+    image: alvinr/mariadb-spider
+    networks:
+      - back
+    command: "-hmariadb -uroot -pfoo"
+    external_links:
+      - prod_mariadb_1:mariadb
+
+  schema-setup-spider:
+    image: alvinr/vote-schema:spider
+    networks:
+      - back
+    command: "-hmariadb -uroot -pfoo"
+    external_links:
+      - prod_mariadb_1:mariadb
+    depends_on:
+      - install-spider
+
+  schema-setup-shard1:
+    image: alvinr/vote-schema:shard
+    networks:
+      - back
+    command: "-hmariadb -uroot -pfoo"
+    external_links:
+      - prod_mariadb-shard1_1:mariadb
+    depends_on:
+      - schema-setup-spider
+
+  schema-setup-shard2:
+    image: alvinr/vote-schema:shard
+    networks:
+      - back
+    command: "-hmariadb -uroot -pfoo"
+    external_links:
+      - prod_mariadb-shard2_1:mariadb
+    depends_on:
+      - schema-setup-spider

@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  schema-setup:
+    image: alvinr/vote-schema:dev
+    command: "-hmariadb -uroot -pfoo"
+    external_links:
+      - dev_mariadb_1:mariadb
