@@ -27,9 +27,8 @@ CREATE SERVER shard2 FOREIGN DATA WRAPPER mysql
 create or replace 
     table test.votes(
         voter_id int, 
-        ts bigint, 
         vote varchar(1),
-        primary key(voter_id, ts))
+        primary key(voter_id))
     ENGINE=spider
     COMMENT='wrapper "mysql", table "votes"'
     PARTITION BY HASH (voter_id)

@@ -36,15 +36,15 @@ To start app in development:
     $ cd vote/dev/
     $ source scripts/setup.sh
     $ docker-compose up -d
-    $ docker run alvinr/vote-schema:dev -h172.17.0.3  -uroot -pfoo
+    $ docker-compose -f setup.yml up
 
 The app will be available at http://dev.myapp.com:5000. You can inspect the database
 
     $ docker run -it --rm --net dev_default mariadb sh -c "exec mysql -uroot -pfoo -hdev_mariadb_1"
 
-    MariaDB [test]> select * from test.votes;
-    MariaDB [test]> select * from test.vote_history;
-    MariaDB [test]> select * from test.summary;
+    MariaDB [(none)]> select * from test.votes;
+    MariaDB [(none)]> select * from test.vote_history;
+    MariaDB [(none)]> select * from test.summary;
 
 ## Running demo - Part Two: Deploy into production
 
@@ -55,21 +55,21 @@ To start app in production:
     $ docker-compose up -d
     $ docker-compose -f setup.yml up
 
-    $ docker $(docker-machine config swarm-0) network connect prod swarm-0/prod_haproxy_1
+    $ docker $(docker-machine config swarm-0) network connect swarm-0/bridge prod_haproxy_1
 
 The app will be available at http://prod.myapp.com
 
 ## Running demo - Part Three: Scale web tier in production
 
-    $ docker-compose scale web=5
+    $ docker-compose scale web=4
 
 You can log onto the MariaDB and look at data
 
-    $ docker run -it --rm --net prod_back mariadb sh -c "exec mysql -uroot -pfoo -hprod_mariadb_1"
+    $ docker run -it --rm --net prod_back mariadb sh -c "exec mysql -uroot -pfoo -hmariadb"
 
-    MariaDB [test]> select * from test.votes;
-    MariaDB [test]> select * from test.vote_history;
-    MariaDB [test]> select * from test.summary;
+    MariaDB [(none)]> select * from test.votes;
+    MariaDB [(none)]> select * from test.vote_history;
+    MariaDB [(none)]> select * from test.summary;
 
 # Building the images
 If you want to rebuild the images for any reason, you will need to build, push and update the compose files as necessary (since you will push to a new repo)

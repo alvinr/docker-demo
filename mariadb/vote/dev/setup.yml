@@ -1,3 +1,5 @@
+# This compose file is used to create the schema required for the application
+
 version: '2'
 
 services:

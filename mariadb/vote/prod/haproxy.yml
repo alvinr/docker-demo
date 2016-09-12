@@ -1,3 +1,10 @@
+# This compose file describe the services required to support HAproxy:
+# - interlock: Used to listen for container create/destory events to automaticall reconfigure HAProxy
+# - haproxy: Load balance between the Web Appliation nodes
+# - web: Voting application
+#
+# These base definitions are then extended when these are composed by the main docker-compose.yml file
+
 version: "2"
 
 services:

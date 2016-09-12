@@ -1,3 +1,5 @@
+# This compose file defines the Application and Database services
+
 version: '2'
 
 services:

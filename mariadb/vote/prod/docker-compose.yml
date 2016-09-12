@@ -1,22 +1,23 @@
+# This compose file is defines all the services required for a production deplyment
+# - interlock: Used to listen for container create/destory events to automaticall reconfigure HAProxy
+# - haproxy: Load balance between the Web Appliation nodes
+# - web: Voting application
+# - mariadb: Primary MariaDB node, which uses the Spider Storage Engine to distribiute reads/writes across the cluster
+# - mariadb-shard1/2: Two shards that back the Spinder Storage Engine
+#
+# This uses the 'extends' primitive allowing decoration of the base service definitions.
+
 version: '2'
 
 networks:
   back:
     driver: overlay
-  # bridge:
-  #   external:
-  #     name: bridge    
-  # front:
-  #   external:
-  #     name: bridge
 
 services:
   interlock:
     extends:
       file: haproxy.yml
       service: interlock
-    # network_mode: "bridge"  
-    # network_mode: "prod_back"
     environment:
       - "constraint:node==swarm-0"
     networks:
@@ -28,17 +29,8 @@ services:
       service: haproxy-server
     environment:
       - "constraint:node==swarm-0"
-    # ports:
-    #   - 80 
-    # network_mode: "bridge"  
-    # network_mode: "prod_back"
-    # network_mode: "prod_front"
-    # links:
-    #   - interlock:interlock
     networks:
       - back
-    # depends_on:
-    #   - interlock
 
   web:
     image: alvinr/demo-webapp-vote:mariadb
@@ -47,19 +39,8 @@ services:
       service: haproxy-app
     environment:
       MARIADB_HOST: mariadb
-#      - "constraint:node!=swarm-0"      
-    # networks:
-    #   - back
-    #   - bridge
-    # network_mode: "bridge"  
-    # network_mode: "prod_back"
-    # network_mode: "prod_front"
-    # links:
-    #   - mariadb:mariadb
     networks:
       - back
-    depends_on:
-        - haproxy
 
   mariadb:
     extends:
@@ -84,8 +65,6 @@ services:
       back:
         aliases:
           - mariadb_shard1
-    # links:
-    #   - mariadb:mariadb
     depends_on:
         - mariadb
 
@@ -100,7 +79,5 @@ services:
       back:
         aliases:
           - mariadb_shard2
-    # links:
-    #   - mariadb:mariadb
     depends_on:
         - mariadb
