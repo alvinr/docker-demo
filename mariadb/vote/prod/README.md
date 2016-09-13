@@ -1,7 +1,7 @@
 # 'prod' Directory
 
 This has demos for
-- galera: High Availbaility demo
+- galera: High Availability demo
 - spider: Scale Out Demo
 - common: hapoxy and interlock configuration
 
