@@ -1,5 +1,8 @@
-## Image for 'prod'
+# 'prod' Directory
 
-Various images are used by the 'prod' demo, see README.md in each of the following directories for build instructions
-    - schema
-    - spider-config
+This has demos for
+- galera: High Availbaility demo
+- spider: Scale Out Demo
+- common: hapoxy and interlock configuration
+
+See the README.md in each subdirectory

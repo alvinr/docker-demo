@@ -1,0 +1,17 @@
+# This compose file is used to create the schema required for the application
+
+version: '2'
+
+networks:
+  back:
+    external:
+      name: galera_back
+
+services:
+  schema-setup:
+    image: alvinr/vote-schema:dev
+    command: "-hnode0 -uroot -pfoo"
+    networks:
+      - back    
+    external_links:
+      - galera_node0_1:node0

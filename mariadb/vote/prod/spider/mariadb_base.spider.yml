@@ -6,7 +6,8 @@ services:
       image: mariadb:latest
       environment:
         MYSQL_ROOT_PASSWORD: foo
-        "com.mariadb.cluster": prod-cluster
+      labels:
+        - "com.mariadb.cluster=prod-cluster" 
     #  volumes:
     #    - "$PWD:/var/lib/mysql"
 
@@ -14,6 +15,7 @@ services:
       image: mariadb:latest
       environment:
         MYSQL_ROOT_PASSWORD: foo
-        "com.mariadb.cluster": prod-cluster
+      labels:
+        - "com.mariadb.cluster=prod-cluster" 
     #  volumes:
     #    - "$PWD:/var/lib/mysql"

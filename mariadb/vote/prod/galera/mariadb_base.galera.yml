@@ -1,0 +1,35 @@
+# This compose file describe the services to support a MaraiDB cluster with the Galera Cluster
+version: '2'
+
+services:
+    mariadb-galera-node0:
+      image: alvinr/mariadb-galera
+      restart: always
+      environment:
+        MYSQL_ROOT_PASSWORD: foo
+        "WSREP_CLUSTER_NAME": prod-vote
+        "WSREP_CLUSTER_ADDRESS": "gcomm://"
+      labels:
+        - "com.mariadb.cluster=prod-cluster" 
+      ports:
+        - 3306:3306
+        - 4567-4568:4567-4568
+        - 4444:4444    
+    #  volumes:
+    #    - "$PWD:/var/lib/mysql"
+
+    mariadb-galera-nodeN:
+      image: alvinr/mariadb-galera
+      restart: always
+      environment:
+        MYSQL_ROOT_PASSWORD: foo
+        "WSREP_CLUSTER_NAME": prod-vote
+        "WSREP_CLUSTER_ADDRESS": "gcomm://node0:4567"
+      labels:
+        - "com.mariadb.cluster=prod-cluster" 
+      ports:
+        - 3306:3306
+        - 4567-4568:4567-4568
+        - 4444:4444    
+    #  volumes:
+    #    - "$PWD:/var/lib/mysql"

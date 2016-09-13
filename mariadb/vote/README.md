@@ -2,9 +2,18 @@
 
 ## Cavets
 * has been tested on Docker 1.12.1
-* has been tested on os-x 10.10 & 10.11
+* has been tested on OS-X 10.11
 * scripts will create machines based on the vmwarefusion driver. If you don't have that, then you will need to make some changes
-* because boot2docker.iso is used, the locations of files will change if you use Ubuntu or something else. 
+* because boot2docker.iso is used, the locations of files will change if you use Ubuntu or something else.
+
+## Overview
+This shows a development life-cycle:
+- building an application in development
+- testing the application locally
+- using the development image, deploying into production
+-- adding a load balancer (HAProxy) infront of the Web application
+-- scaling the Web farm
+-- deploying a Galera (for HA) or Spider (for Scaling) MariaDB cluster
 
 ## Preparation
 
@@ -29,47 +38,11 @@ Start the Viz:
 
 The app will be available at http://viz.myapp.com:3000    
 
-## Running demo - Part One: Scale the app
-
-To start app in development:
-
-    $ cd vote/dev/
-    $ source scripts/setup.sh
-    $ docker-compose up -d
-    $ docker-compose -f setup.yml up
-
-The app will be available at http://dev.myapp.com:5000. You can inspect the database
-
-    $ docker run -it --rm --net dev_default mariadb sh -c "exec mysql -uroot -pfoo -hdev_mariadb_1"
-
-    MariaDB [(none)]> select * from test.votes;
-    MariaDB [(none)]> select * from test.vote_history;
-    MariaDB [(none)]> select * from test.summary;
-
-## Running demo - Part Two: Deploy into production
-
-To start app in production:
-
-    $ cd prod/
-    $ source scripts/setup.sh
-    $ docker-compose up -d
-    $ docker-compose -f setup.yml up
-
-    $ docker $(docker-machine config swarm-0) network connect swarm-0/bridge prod_haproxy_1
-
-The app will be available at http://prod.myapp.com
-
-## Running demo - Part Three: Scale web tier in production
-
-    $ docker-compose scale web=4
-
-You can log onto the MariaDB and look at data
-
-    $ docker run -it --rm --net prod_back mariadb sh -c "exec mysql -uroot -pfoo -hmariadb"
-
-    MariaDB [(none)]> select * from test.votes;
-    MariaDB [(none)]> select * from test.vote_history;
-    MariaDB [(none)]> select * from test.summary;
+## Running the demo
+Specifc instructions are included in each of the major sub-directories
+- dev
+- prod/galera (for the HA demo)
+- prod/spider (for the scaling demo)
 
 # Building the images
 If you want to rebuild the images for any reason, you will need to build, push and update the compose files as necessary (since you will push to a new repo)

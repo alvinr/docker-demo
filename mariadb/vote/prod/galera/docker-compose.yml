@@ -1,0 +1,81 @@
+# This compose file is defines all the services required for a production deplyment
+# - interlock: Used to listen for container create/destory events to automaticall reconfigure HAProxy
+# - haproxy: Load balance between the Web Appliation nodes
+# - web: Voting application
+# - mariadb: Primary MariaDB node, which uses the Spider Storage Engine to distribiute reads/writes across the cluster
+# - mariadb-shard1/2: Two shards that back the Spinder Storage Engine
+#
+# This uses the 'extends' primitive allowing decoration of the base service definitions.
+
+version: '2'
+
+networks:
+  back:
+    driver: overlay
+
+services:
+  interlock:
+    extends:
+      file: ../common/haproxy.yml
+      service: interlock
+    environment:
+      - "constraint:node==swarm-0"
+    networks:
+      back:
+
+  haproxy:
+    extends:
+      file: ../common/haproxy.yml
+      service: haproxy-server
+    environment:
+      - "constraint:node==swarm-0"
+    networks:
+      - back
+
+  web:
+    image: alvinr/demo-webapp-vote:mariadb
+    extends:
+      file: ../common/haproxy.yml
+      service: haproxy-app
+    environment:
+      MARIADB_HOST: node0
+    networks:
+      - back
+
+  node0:
+    extends:
+      file: mariadb_base.galera.yml
+      service: mariadb-galera-node0
+    environment:
+      - "constraint:node==swarm-0"
+      - "affinity:com.mariadb.cluster!=prod-cluster"
+    networks:
+      back:
+        aliases:
+          - node0
+
+  node1:
+    extends:
+      file: mariadb_base.galera.yml
+      service: mariadb-galera-nodeN  
+    environment:
+      - "affinity:com.mariadb.cluster!=prod-cluster"
+    networks:
+      back:
+        aliases:
+          - node1
+    depends_on:
+        - node0
+
+  node2:
+    extends:
+      file: mariadb_base.galera.yml
+      service: mariadb-galera-nodeN
+    environment:
+      - "affinity:com.mariadb.cluster!=prod-cluster"
+    networks:
+      back:
+        aliases:
+          - node2
+    depends_on:
+        - node0

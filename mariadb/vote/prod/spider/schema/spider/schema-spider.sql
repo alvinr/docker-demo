@@ -10,7 +10,7 @@ drop server if exists shard2;
 
 CREATE SERVER shard1 FOREIGN DATA WRAPPER mysql 
     OPTIONS( 
-    HOST 'prod_mariadb-shard1_1',
+    HOST 'spider_shard1_1',
     DATABASE 'test',
     USER 'sharded',
     PASSWORD 'sharding',
@@ -18,7 +18,7 @@ CREATE SERVER shard1 FOREIGN DATA WRAPPER mysql
 
 CREATE SERVER shard2 FOREIGN DATA WRAPPER mysql 
     OPTIONS( 
-    HOST 'prod_mariadb-shard2_1',
+    HOST 'spider_shard2_1',
     DATABASE 'test',
     USER 'sharded',
     PASSWORD 'sharding',
