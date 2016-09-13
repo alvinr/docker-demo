@@ -3,7 +3,7 @@
 # - haproxy: Load balance between the Web Appliation nodes
 # - web: Voting application
 # - mariadb: Primary MariaDB node, which uses the Spider Storage Engine to distribiute reads/writes across the cluster
-# - mariadb-shard1/2: Two shards that back the Spinder Storage Engine
+# - shard1/2: Two shards that back the Spinder Storage Engine
 #
 # This uses the 'extends' primitive allowing decoration of the base service definitions.
 
