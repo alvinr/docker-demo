@@ -51,6 +51,7 @@ The app will be available at http://prod.dockercon.com
 ## Running demo - Part Two: Scale the DB
 
 Start the MongoDB Cluster
+
     $ cd mongodb
     $ source scripts/setup.sh
     $ docker-compose up -d
@@ -61,12 +62,14 @@ Start the MongoDB Cluster
     $ docker-machine ssh swarm-0 "docker service attach mongodb_mongodb_1 prod_mongodb_1.multihost"
 
  You can log onto the MongoDb using by
+
     $ docker run -it --rm alvinr/mongo mongodb_mongodb_1:27017   
 
 ## Running demo - Part Three: Move the DB
 <TBD> need to look at runc checkpoint & restore, examples here https://github.com/crosbymichael/uhaul/blob/master/node.go
 
 ## Cleaning up the demo
+
     $ scripts/cleanup.sh
 
 # Building the images

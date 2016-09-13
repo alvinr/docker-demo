@@ -1,4 +1,4 @@
-# MariaDB + Galera - High Availbaility Demo
+# MariaDB + Galera - High Availability Demo
 Showcase for HA facilities provided by Galera
 
 ## Running demo - Part Two: Deploy into production
