@@ -1,0 +1,54 @@
+# This compose file is defines all the services required for a production deplyment
+# - interlock: Used to listen for container create/destory events to automaticall reconfigure HAProxy
+# - haproxy: Load balance between the Web Appliation nodes
+# - web: Voting application
+# - mariadb: Primary MariaDB node, which uses the Spider Storage Engine to distribiute reads/writes across the cluster
+#
+# This uses the 'extends' primitive allowing decoration of the base service definitions.
+
+version: '2'
+
+networks:
+  back:
+    driver: overlay
+
+services:
+  interlock:
+    extends:
+      file: ../common/haproxy.yml
+      service: interlock
+    environment:
+      - "constraint:node==swarm-0"
+    networks:
+      back:
+
+  haproxy:
+    extends:
+      file: ../common/haproxy.yml
+      service: haproxy-server
+    environment:
+      - "constraint:node==swarm-0"
+    networks:
+      - back
+
+  web:
+    image: alvinr/demo-webapp-vote:mariadb
+    extends:
+      file: ../common/haproxy.yml
+      service: haproxy-app
+    environment:
+      MARIADB_HOST: mariadb
+    networks:
+      - back
+
+  mariadb:
+    extends:
+      file: mariadb_base.yml
+      service: mariadb
+    image: mariadb:10.1.16
+    environment:
+      - "constraint:node==swarm-0"
+    networks:
+      back:
+        aliases:
+          - mariadb

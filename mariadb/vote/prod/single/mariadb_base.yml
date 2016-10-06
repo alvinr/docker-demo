@@ -1,0 +1,13 @@
+# This compose file describe the services to support a MaraiDB cluster with the Spider Storage Engine
+version: '2'
+
+services:
+    mariadb:
+      image: mariadb:10.1
+      environment:
+        MYSQL_ROOT_PASSWORD: foo
+      labels:
+        - "com.mariadb.cluster=prod-cluster" 
+    #  volumes:
+    #    - "$PWD:/var/lib/mysql"
+

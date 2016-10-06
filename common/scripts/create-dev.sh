@@ -8,7 +8,8 @@ if [ "$DRIVER" == "vmwarefusion" ]
 then
 #  B2D_OPT="--vmwarefusion-boot2docker-url=$B2D_URL"
   B2D_OPT=""
-  ENGINE_OPT=""
+#   ENGINE_OPT='--vmwarefusion-disk-size 30000 --vmwarefusion-cpu-count 2 --vmwarefusion-memory-size 2048'
+   ENGINE_OPT='--vmwarefusion-cpu-count 2 '
 else
   B2D_OPT=""
   ENGINE_OPT="--engine-install-url=$ENGINE_URL"
