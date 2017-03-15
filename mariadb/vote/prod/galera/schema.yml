@@ -1,17 +1,23 @@
 # This compose file is used to create the schema required for the application
 
-version: '2'
+version: "3.1"
 
 networks:
   back:
     external:
-      name: galera_back
+      name: myapp_back
+
+secrets:
+  app_password:
+    file: ./app_password.txt
 
 services:
-  schema-setup:
+  schema:
     image: alvinr/vote-schema:dev
-    command: "-hnode0 -uroot -pfoo"
+    command: "-hmaxscale -uapp"
     networks:
-      - back    
-    external_links:
-      - galera_node0_1:node0
+      - back
+    environment:
+      MYSQL_PASSWORD_FILE: "/run/secrets/app_password"
+    secrets:
+      - app_password

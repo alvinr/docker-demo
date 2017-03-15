@@ -8,10 +8,9 @@ function do_dir() {
   popd
 }
 
-do_dir "dev"
-do_dir "prod"
 do_dir "mongodb"
 do_dir "aerospike"
 do_dir "redis"
+do_dir "mariadb"
 
 export PS1="\h:\W$ "

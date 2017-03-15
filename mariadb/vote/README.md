@@ -28,7 +28,7 @@ Start the Viz:
      $ cd common/viz
      $ source scripts/setup.sh
      $ scripts/up.sh swarm-0
-     $ echo "$(docker-machine ip swarm-consul) viz.myapp.com" | sudo tee -a /etc/hosts
+     $ echo "$(docker-machine ip swarm-0) viz.myapp.com" | sudo tee -a /etc/hosts
 
 The app will be available at http://viz.myapp.com:3000    
 

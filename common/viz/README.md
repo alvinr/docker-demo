@@ -1,7 +1,12 @@
 # Docker Swarm Visualization
 
+## Running - new stack version
 
-## Running
+```
+docker stack deploy viz -c docker-compose.stack.yml
+```
+
+## Running - old compose version
 
 This assumes you have created your Swarm with Machine and the master is called `swarm-0`.
 

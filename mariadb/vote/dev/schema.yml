@@ -5,6 +5,8 @@ version: '2'
 services:
   schema-setup:
     image: alvinr/vote-schema:dev
-    command: "-hmariadb -uroot -pfoo"
+    command: "-hdev_mariadb_1 -uroot"
+    environment:
+      MYSQL_PASSWORD: foo   
     external_links:
       - dev_mariadb_1:mariadb

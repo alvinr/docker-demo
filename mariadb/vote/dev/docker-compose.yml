@@ -1,6 +1,6 @@
 # This compose file defines the Application and Database services
 
-version: '2'
+version: "2"
 
 services:
   web:
@@ -11,9 +11,10 @@ services:
      - mariadb
     hostname: dev.myapp.com
     environment:
-      MARIADB_HOST: dev_mariadb_1   
+      APP_MARIADB_HOST: dev_mariadb_1
+      APP_PASSWORD: foo   
   mariadb:
-    image: mariadb:latest
+    image: mariadb:10.1
     environment:
       MYSQL_ROOT_PASSWORD: foo
   #  volumes: 

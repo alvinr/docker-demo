@@ -1,0 +1,123 @@
+version: "3.1"
+networks:
+  front:
+  back:
+    external:
+      name: myapp_back
+
+secrets:
+  mariadb_root_password:
+    file: ./mariadb_password.txt
+  xtrabackup_password:
+    file: ./xtrabackup_password.txt
+  app_password:
+    file: ./app_password.txt
+
+services:
+  haproxy:
+    image: dockercloud/haproxy
+    networks:
+      - front
+      - back
+    depends_on:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 80:80
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  web:
+    image: alvinr/demo-webapp-vote:mariadb
+    environment:
+      SERVICE_PORTS: "5000"
+      VIRTUAL_HOST: "prod.myapp.com"
+      OPTION_A: "Support"
+      OPTION_B: "Resist"
+      OPTION_C: "Emigrate"
+      APP_MARIADB_HOST: "maxscale"
+      APP_USER: "app"
+      APP_PASSWORD_FILE: "/run/secrets/app_password"
+      APP_DATABASE: "test"
+    networks:
+      - back
+    deploy:
+      placement:
+        constraints: [node.role != manger]
+    secrets:
+      - app_password
+
+  mariadb_cluster:
+    image: alvinr/mariadb-galera-swarm
+    # image: colinmollenhour/mariadb-galera-swarm
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: "/run/secrets/mariadb_root_password"
+      XTRABACKUP_PASSWORD_FILE: "/run/secrets/xtrabackup_password"
+      CLUSTER_NAME: "prod-vote"
+      NODE_ADDRESS: "eth0"
+      CLIENT_NODE_ADDR: "10.0.0.%"
+      MYSQL_USER: "app"
+      MYSQL_DATABASE: "test"
+      MYSQL_PASSWORD_FILE: "/run/secrets/app_password"
+      MAXSCALE_PRIVS: "true"
+    labels:
+      com.mariadb.cluster: "myapp-prod-cluster"
+    networks:
+      - back
+    command: seed
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [engine.labels.com.mariadb.cluster != myapp-prod-cluster]
+    secrets:
+      - mariadb_root_password
+      - xtrabackup_password
+      - app_password
+
+  mariadb_cluster_node:
+    image: alvinr/mariadb-galera-swarm
+    # image: colinmollenhour/mariadb-galera-swarm
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: "/run/secrets/mariadb_root_password"
+      XTRABACKUP_PASSWORD_FILE: "/run/secrets/xtrabackup_password"
+      CLUSTER_NAME: "prod-vote"
+      NODE_ADDRESS: "eth0"
+      CLIENT_NODE_ADDR: "10.0.0.%"
+      MYSQL_USER: "app"
+      MYSQL_DATABASE: "test"
+      MYSQL_PASSWORD_FILE: "/run/secrets/app_password"
+      MAXSCALE_PRIVS: "true"      
+    labels:
+      com.mariadb.cluster: "myapp-prod-cluster"
+    networks:
+      - back
+    command: node mariadb_cluster
+    deploy:
+      replicas: 2
+      placement:
+        constraints: [engine.labels.com.mariadb.cluster != myapp-prod-cluster]
+    secrets:
+      - mariadb_root_password
+      - xtrabackup_password
+      - app_password
+
+  maxscale:
+    image: alvinr/maxscale-swarm
+    environment:
+      DB_SERVICE_NAMES: "myapp_mariadb_cluster myapp_mariadb_cluster_node"
+      DB_TARGET_COUNT: "3"
+      ENABLE_ROOT_USER: "false"
+      # MAX_USER: "root"
+      # MAX_PASS_FILE: "/run/secrets/mariadb_root_password"
+      MAX_USER: "app"
+      MAX_PASS_FILE: "/run/secrets/app_password"
+    labels:
+      com.mariadb.cluster: "myapp-maxscale"
+    networks:
+      - back
+    deploy:
+      replicas: 1
+    secrets:
+      - app_password

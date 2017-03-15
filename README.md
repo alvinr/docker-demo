@@ -4,6 +4,8 @@ This repo contains some basic Docker demos and integration with various Database
 - MariaDB
 - MongoDB
 
+At various times these have worked, but Docker is an ever changing beast, so no guarantee these will continue to work with the current Docker release.
+
 The goal of the demo is to show the end to end development life-cycle building a Web + database application with the Docker eco-system. The demo specifically shows
 - Deployment & Testing in development
 - Definition & orchestration of services, in development and production

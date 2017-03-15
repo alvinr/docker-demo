@@ -8,6 +8,7 @@ import random
 import json
 import time
 import MySQLdb as mariadb
+import os.path
 
 option_a = os.getenv('OPTION_A', "Coke")
 option_b = os.getenv('OPTION_B', "Pepsi")
@@ -24,8 +25,8 @@ record_vote = (
   "VALUES (%s, %s)" 
   "ON DUPLICATE KEY update vote=%s")
 insert_vote_history = (
-  "INSERT INTO vote_history (voter_id, ts, vote) "
-  "VALUES (%s, %s, %s)" )
+  "INSERT INTO vote_history (voter_id, vote) "
+  "VALUES (%s, %s)" )
 update_summary = (
   "INSERT INTO summary (category, total) "
   "VALUES (%s, %s) "
@@ -46,11 +47,19 @@ def dump_env():
 @app.route("/", methods=['POST','GET'])
 def index():
 
-     #    if ((db is None) or (db.is_connected()==False)):
-    db = mariadb.connect(host=os.environ.get("MARIADB_HOST", "prod_mariadb_1"),
-                         user="root",
-                         passwd="foo",
-                         db="test")
+    #    if ((db is None) or (db.is_connected()==False)):
+    secrets_fn=os.environ.get("APP_PASSWORD_FILE", "")
+    app.logger.error(secrets_fn)
+    if os.path.isfile(secrets_fn):
+      with open(secrets_fn, 'r') as myfile:
+        passwd=myfile.read().replace('\n', '')
+    else:
+        passwd=os.environ.get("APP_PASSWORD","none")
+
+    db = mariadb.connect(host=os.environ.get("APP_MARIADB_HOST", "localhost"),
+                         user=os.environ.get("APP_USER","root"),
+                         passwd=passwd,
+                         db=os.environ.get("APP_DATABASE","test"))
 
     cursor=db.cursor()
 
@@ -63,11 +72,8 @@ def index():
     if request.method == 'POST':
         vote = request.form['vote']
 
-    time_ms = long(time.time()*1000)
-    app.logger.error('time %d', time_ms)
-
     cursor.execute(record_vote, (voter_id, vote, vote))
-    cursor.execute(insert_vote_history, (voter_id, time_ms, vote))
+    cursor.execute(insert_vote_history, (voter_id, vote))
     cursor.execute(update_summary, ("total_votes", 1))
     cursor.execute(update_summary, (host, 1))
 

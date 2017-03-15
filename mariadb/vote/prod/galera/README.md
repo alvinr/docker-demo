@@ -7,20 +7,20 @@ To start app in production:
 
     $ cd prod/galera
     $ source ../scripts/setup.sh
-    $ docker-compose up -d
+    $ docker network create -d overlay --attachable myapp_back
+    $ docker secret create mariadb_root_password mariadb_password.txt
+    $ docker stack deploy myapp -c docker-compose.stack.yml
     $ docker-compose -f schema.yml up
-
-    $ docker network connect swarm-0/bridge galera_haproxy_1
 
 The app will be available at http://prod.myapp.com
 
 ## Running demo - Part Three: Scale web tier in production
 
-    $ docker-compose scale web=4
+    $ docker service scale myapp_web=4
 
 You can log onto the MariaDB and look at data
 
-    $ docker run -it --rm --net galera_back mariadb sh -c "exec mysql -uroot -pfoo -hnode0"
+    $  docker run -it --rm --net myapp_back mariadb sh -c "mysql -uroot -pfoo -hmariadb_cluster"
 
     MariaDB [(none)]> select * from test.votes;
     +------------+------+

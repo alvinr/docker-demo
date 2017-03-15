@@ -20,8 +20,9 @@ To start app in development:
 
     $ cd vote/dev/
     $ source scripts/setup.sh
+    $ docker-compose build
     $ docker-compose up -d
-    $ docker-compose -f setup.yml up
+    $ docker-compose -f schema.yml up
 
 The app will be available at http://dev.myapp.com:5000. You can inspect the database
 
