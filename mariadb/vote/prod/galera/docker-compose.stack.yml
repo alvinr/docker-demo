@@ -19,8 +19,6 @@ services:
     networks:
       - front
       - back
-    depends_on:
-      - web
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
@@ -51,13 +49,11 @@ services:
 
   mariadb_cluster:
     image: alvinr/mariadb-galera-swarm
-    # image: colinmollenhour/mariadb-galera-swarm
     environment:
       MYSQL_ROOT_PASSWORD_FILE: "/run/secrets/mariadb_root_password"
       XTRABACKUP_PASSWORD_FILE: "/run/secrets/xtrabackup_password"
       CLUSTER_NAME: "prod-vote"
       NODE_ADDRESS: "eth0"
-      CLIENT_NODE_ADDR: "10.0.0.%"
       MYSQL_USER: "app"
       MYSQL_DATABASE: "test"
       MYSQL_PASSWORD_FILE: "/run/secrets/app_password"
@@ -78,13 +74,11 @@ services:
 
   mariadb_cluster_node:
     image: alvinr/mariadb-galera-swarm
-    # image: colinmollenhour/mariadb-galera-swarm
     environment:
       MYSQL_ROOT_PASSWORD_FILE: "/run/secrets/mariadb_root_password"
       XTRABACKUP_PASSWORD_FILE: "/run/secrets/xtrabackup_password"
       CLUSTER_NAME: "prod-vote"
       NODE_ADDRESS: "eth0"
-      CLIENT_NODE_ADDR: "10.0.0.%"
       MYSQL_USER: "app"
       MYSQL_DATABASE: "test"
       MYSQL_PASSWORD_FILE: "/run/secrets/app_password"
@@ -109,8 +103,6 @@ services:
       DB_SERVICE_NAMES: "myapp_mariadb_cluster myapp_mariadb_cluster_node"
       DB_TARGET_COUNT: "3"
       ENABLE_ROOT_USER: "false"
-      # MAX_USER: "root"
-      # MAX_PASS_FILE: "/run/secrets/mariadb_root_password"
       MAX_USER: "app"
       MAX_PASS_FILE: "/run/secrets/app_password"
     labels:
@@ -118,6 +110,8 @@ services:
     networks:
       - back
     deploy:
-      replicas: 1
+      replicas: 2
+      placement:
+        constraints: [engine.labels.com.mariadb.cluster != myapp-maxscale]
     secrets:
       - app_password

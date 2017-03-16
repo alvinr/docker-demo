@@ -8,7 +8,6 @@ To start app in production:
     $ cd prod/galera
     $ source ../scripts/setup.sh
     $ docker network create -d overlay --attachable myapp_back
-    $ docker secret create mariadb_root_password mariadb_password.txt
     $ docker stack deploy myapp -c docker-compose.stack.yml
     $ docker-compose -f schema.yml up
 
@@ -66,3 +65,10 @@ You can log onto the MariaDB and look at data
     +--------------------+-------+
     1 row in set (0.00 sec)
 
+## Running demo - Part Four: MaxScale routing tier in production
+
+    $ docker stack scale myapp_maxscale=4
+    
+You can use maxadmin to view request routing
+
+    $ docker $(docker-machine config swarm-2) exec -it 63bb00e678b4 maxadmin show services
