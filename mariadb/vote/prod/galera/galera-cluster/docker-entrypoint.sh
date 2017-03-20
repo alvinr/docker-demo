@@ -113,11 +113,6 @@ then
         echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
     fi
     
-    CLIENT_NODE_ADDR=${CLIENT_NODE_ADDR}
-    if [ -z "$CLIENT_NODE_ADDR" ]; then
-        CLIENT_NODE_ADDR = "%"
-    fi
-
     cat >/tmp/bootstrap.sql <<EOF
 CREATE USER IF NOT EXISTS 'xtrabackup'@'127.0.0.1' IDENTIFIED BY '$XTRABACKUP_PASSWORD';
 GRANT RELOAD,LOCK TABLES,REPLICATION CLIENT ON *.* TO 'xtrabackup'@'127.0.0.1';
