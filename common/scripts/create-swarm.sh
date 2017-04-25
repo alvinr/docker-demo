@@ -1,6 +1,6 @@
 #!/bin/bash
 DRIVER=vmwarefusion
-SWARM_SIZE=3
+SWARM_SIZE=2
 
 if [ "$DRIVER" == "vmwarefusion" ]
 then

@@ -6,12 +6,12 @@ networks:
       name: myapp_back
 
 secrets:
+  app_password:
+    file: ./app_password.txt
   mariadb_root_password:
     file: ./mariadb_password.txt
   xtrabackup_password:
     file: ./xtrabackup_password.txt
-  app_password:
-    file: ./app_password.txt
 
 services:
   haproxy:
@@ -52,46 +52,26 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD_FILE: "/run/secrets/mariadb_root_password"
       XTRABACKUP_PASSWORD_FILE: "/run/secrets/xtrabackup_password"
-      CLUSTER_NAME: "prod-vote"
-      NODE_ADDRESS: "eth0"
+      CLUSTER_NAME: "mariadb_cluster"
+      NODE_ADDRESS: "eth2"
       MYSQL_USER: "app"
       MYSQL_DATABASE: "test"
       MYSQL_PASSWORD_FILE: "/run/secrets/app_password"
       MAXSCALE_PRIVS: "true"
+      TRACE: "y"
     labels:
-      com.mariadb.cluster: "myapp-prod-cluster"
+      com.mariadb.cluster: "myapp-mariadb"
     networks:
       - back
     command: seed
+    ports:
+      - 3306:3306
+      - 4567-4568:4567-4568
+      - 4444:4444
     deploy:
       replicas: 1
       placement:
-        constraints: [engine.labels.com.mariadb.cluster != myapp-prod-cluster]
-    secrets:
-      - mariadb_root_password
-      - xtrabackup_password
-      - app_password
-
-  mariadb_cluster_node:
-    image: alvinr/mariadb-galera-swarm
-    environment:
-      MYSQL_ROOT_PASSWORD_FILE: "/run/secrets/mariadb_root_password"
-      XTRABACKUP_PASSWORD_FILE: "/run/secrets/xtrabackup_password"
-      CLUSTER_NAME: "prod-vote"
-      NODE_ADDRESS: "eth0"
-      MYSQL_USER: "app"
-      MYSQL_DATABASE: "test"
-      MYSQL_PASSWORD_FILE: "/run/secrets/app_password"
-      MAXSCALE_PRIVS: "true"      
-    labels:
-      com.mariadb.cluster: "myapp-prod-cluster"
-    networks:
-      - back
-    command: node mariadb_cluster
-    deploy:
-      replicas: 2
-      placement:
-        constraints: [engine.labels.com.mariadb.cluster != myapp-prod-cluster]
+        constraints: [engine.labels.com.mariadb.cluster != myapp-mariadb]
     secrets:
       - mariadb_root_password
       - xtrabackup_password
@@ -100,7 +80,8 @@ services:
   maxscale:
     image: alvinr/maxscale-swarm
     environment:
-      DB_SERVICE_NAMES: "myapp_mariadb_cluster myapp_mariadb_cluster_node"
+      DB_SERVICE_NAMES: "mariadb_cluster"
+      # DB_SERVICE_NAMES: "myapp_mariadb_cluster myapp_mariadb_cluster_node"
       DB_TARGET_COUNT: "3"
       ENABLE_ROOT_USER: "false"
       MAX_USER: "app"
@@ -110,8 +91,11 @@ services:
     networks:
       - back
     deploy:
-      replicas: 2
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
       placement:
-        constraints: [engine.labels.com.mariadb.cluster != myapp-maxscale]
+        constraints: [node.role == manager]
     secrets:
       - app_password

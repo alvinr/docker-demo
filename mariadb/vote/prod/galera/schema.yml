@@ -14,7 +14,7 @@ secrets:
 services:
   schema:
     image: alvinr/vote-schema:dev
-    command: "-hmaxscale -uapp"
+    command: "-hmariadb_cluster -uapp"
     networks:
       - back
     environment:

@@ -20,7 +20,8 @@ Create dev environment VM:
 Create a Swarm VMs:
 
     $ eval $(docker-machine env dev)
-    $ scripts/create-swarm.sh
+    $ source scripts/create-swarm.sh
+    $ docker network create -d overlay --attachable myapp_back    
     $ echo "$(docker-machine ip swarm-0) prod.myapp.com" | sudo tee -a /etc/hosts
 
 Start the Viz:

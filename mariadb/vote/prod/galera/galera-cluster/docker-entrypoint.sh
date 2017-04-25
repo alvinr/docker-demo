@@ -145,9 +145,37 @@ EOF
     fi
     echo "FLUSH PRIVILEGES;" >> /tmp/bootstrap.sql
 
+    # Add additional database initialization scripts
+    for f in /docker-entrypoint-initdb.d/*; do
+        case "$f" in
+            *.sh)     echo "$0: running $f"; . "$f" ;;
+            *.sql)    echo "$0: appending $f"; cat "$f" >> /tmp/bootstrap.sql ;;
+            *.sql.gz) echo "$0: appending $f"; gunzip -c "$f" >> /tmp/bootstrap.sql ;;
+            *)        echo "$0: ignoring $f" ;;
+         esac
+         echo
+    done
+
     MYSQL_MODE_ARGS+=" --init-file=/tmp/bootstrap.sql"
     rm -f /var/lib/mysql/force-cluster-bootstrapping
     touch /var/lib/mysql/skip-cluster-bootstrapping
+fi
+
+#
+# See if there is already a running node to determine if this node is a 'seed' or not
+#
+mode="$1"
+if [ $mode == "node" ]; then
+    master_node=""
+fi
+
+if [ -n $CLUSTER_NAME ]; then
+    service_nodes=`dig tasks.$CLUSTER_NAME | awk "/tasks.$CLUSTER_NAME./ {print \\$5}"|awk 'NF'|tr '\n' ','|tr -d ' '|sed 's/,$//'`
+    IFS=',' read -r -a cluster_nodes <<< $service_nodes
+    if [ ${#cluster_nodes[@]} -gt 0 ]; then
+        mode="node"
+        master_node=${cluster_nodes[0]}
+    fi
 fi
 
 #
@@ -155,7 +183,7 @@ fi
 #  - seed - Start a new cluster - run only once and use 'node' after cluster is started
 #  - node - Join an existing cluster
 #
-case "$1" in
+case "$mode" in
     seed)
         MYSQL_MODE_ARGS+=" --wsrep-on=ON --wsrep-new-cluster"
         shift 1
@@ -163,11 +191,11 @@ case "$1" in
         ;;
     node)
         MYSQL_MODE_ARGS+=" --wsrep-on=ON"
-        if [ -z "$2" ]; then
+        if [ -z "$master_node" ]; then
             echo "Missing master node address"
             exit 1
         fi
-        ADDRS="$2"
+        ADDRS="$master_node"
         RESOLVE=0
         SLEEPS=0
         while true; do
@@ -206,7 +234,7 @@ case "$1" in
                 echo "Reducing GCOMM_MINIMUM to $GCOMM_MINIMUM"
             fi
         done
-        shift 2
+        shift 1
         echo "Starting node, connecting to gcomm://$GCOMM"
         ;;
 esac
@@ -218,8 +246,17 @@ rm -f /var/lib/mysql/pre-boot.flag
 set +e -m
 
 # Allow external processes to write to docker logs (wsrep_notify_cmd)
-fifo=/tmp/mysql-console
-rm -f $fifo && mkfifo $fifo && chown mysql $fifo && tail -f $fifo &
+fifo=/tmp/mysql-console/fifo
+if [ -f $fifo ]; then
+    rm -rf $(dirname $fifo)
+fi
+
+mkdir -p $(dirname $fifo) \
+    && chmod 755 $(dirname $fifo) \
+    && mkfifo $fifo \
+    && chmod o+rw $fifo \
+    && echo "Tailing $fifo..." \
+    && tail -F $fifo &
 tail_pid=$!
 
 function shutdown () {

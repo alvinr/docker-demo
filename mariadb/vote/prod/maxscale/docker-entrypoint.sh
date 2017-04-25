@@ -38,7 +38,6 @@ IFS=',' read -r -a backend_servers <<< $BACKEND_SERVER_LIST
 
 if [ ${#backend_servers[@]} != "$DB_TARGET_COUNT" ]; then
     echo Only found ${#backend_servers[@]} / $DB_TARGET_COUNT backend servers
-    sleep 3
     exit 1
 fi
 
