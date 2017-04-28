@@ -81,7 +81,6 @@ services:
     image: alvinr/maxscale-swarm
     environment:
       DB_SERVICE_NAMES: "mariadb_cluster"
-      # DB_SERVICE_NAMES: "myapp_mariadb_cluster myapp_mariadb_cluster_node"
       DB_TARGET_COUNT: "3"
       ENABLE_ROOT_USER: "false"
       MAX_USER: "app"
