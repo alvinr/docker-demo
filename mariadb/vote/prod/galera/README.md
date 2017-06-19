@@ -8,7 +8,7 @@ To start app in production:
     $ cd prod/galera
     $ source ../scripts/setup.sh
     $ docker network create -d overlay --attachable --opt encrypted myapp_back
-    $ docker stack deploy myapp -c docker-compose.stack.yml
+    $ docker stack deploy -c docker-compose.stack.yml myapp
     $ docker-compose -f schema.yml up
 
 
