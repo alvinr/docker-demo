@@ -1,0 +1,10 @@
+web:
+  build: .
+  ports:
+   - "5000:5000"
+  links:
+   - mongo
+  hostname: dev.dockercon.com   
+mongo:
+  image: mongo:latest
+  command: --smallfiles --noprealloc
