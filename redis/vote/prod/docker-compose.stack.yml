@@ -1,0 +1,69 @@
+version: "3.1"
+networks:
+  front:
+  back:
+    external:
+      name: myapp_back
+
+secrets:
+  app_password:
+    file: ./app_password.txt
+  redis_password:
+    file: ./redis_password.txt
+
+services:
+  haproxy:
+    image: dockercloud/haproxy
+    networks:
+      - front
+      - back
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 80:80
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  web:
+    image: alvinr/demo-webapp-vote:redis
+    environment:
+      SERVICE_PORTS: "5000"
+      VIRTUAL_HOST: "prod.myapp.com"
+      OPTION_A: "Support"
+      OPTION_B: "Resist"
+      OPTION_C: "Emigrate"
+      APP_REDIS_HOST: "myapp_redis"
+      APP_PASSWORD_FILE: "/run/secrets/app_password"
+    networks:
+      - back
+    deploy:
+      placement:
+        constraints: [node.role != manger]
+    secrets:
+      - app_password
+
+  # Cannot use Redis Pack until Privlidge mode is supported in Swarm. See https://github.com/moby/moby/issues/25885
+  redis:
+#    image: redislabs/redis:5.0.0-31
+     image: redis:4.0.6
+    networks:
+      - back
+      - front
+    ports:
+      - 6379:6379
+      - 8443:8443
+      - 12000:12000
+    # Can't to placement until Redis Pack can be supported in Swarm  
+    # labels:
+    #   com.mariadb.cluster: "myapp-redis"
+    cap_add:
+      - ALL
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [engine.labels.com.mariadb.cluster != myapp-redis]
+    secrets:
+      - redis_password
+      - app_password
+

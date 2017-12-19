@@ -1,0 +1,16 @@
+# This compose file defines the Application and Database services
+
+version: "2"
+
+services:
+  web:
+    build: .
+    ports:
+     - "5000:5000"
+    links:
+     - redis
+    hostname: dev.myapp.com
+    environment:
+      APP_REDIS_HOST: dev_redis_1 
+  redis:
+    image: redis:4
